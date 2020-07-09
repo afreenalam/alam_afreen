@@ -123,7 +123,7 @@ summary(chicks_lm)
 
 
 
-Insert a code chunk and run kable() on chicks_lm. What happens? Write a 1-2 sentence summary of the results.
+Insert a code chunk and run kable() on chicks_lm. What happens? Write a 1-2 sentence summary of the results.[^Footnote]
 ```{r error=TRUE}
 kable(chicks_lm)
 ```
@@ -139,12 +139,12 @@ trees_lm <- lm(Girth ~ Height, data = trees)
 xtable(trees_lm) %>% kable()
 ```
 
-Equations [^Footnote]
+Equations 
 The Chi-square equation
 $$\chi_c^2 = \Sigma\frac{(O_i - E_i)^2}{E_i
 }$$
 
-[^Footnote]: Assignment 3 completed.
+[^Footnote]: Error code included.
 
 
 
