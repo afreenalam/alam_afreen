@@ -1,21 +1,37 @@
 ---
-title: "R Notebook"
+title: "R notebook HW03"
 author: "Afreen Alam"
 date: "`r format(Sys.time(), '%d %B %Y')`"
 output: html_notebook
 editor_options: 
   chunk_output_type: inline
 ---
+
+Homework 03: R Markdown
+
+Part 1: An R Notebook case study
+
+
+
+Load the packages.
+
 ```{r}
 library(tidyverse)
 library(knitr)
 library(xtable)
 ```
 
+
+
+Special data set- anscombe viewed
+
 ```{r}
 anscombe
 ```
 
+
+
+Wrangle the data
 ```{r}
 ansc <- 
   bind_cols(
@@ -33,28 +49,48 @@ ansc <-
 ```
 
 
+
+View the wrangled data set
 ```{r}
 ansc
 ```
 
+
+
+Performing some calculations
 ```{r}
 ansc %>% 
   group_by(dataset) %>% 
-  summarise(
+  summarize(
     mean_x = mean(x),
     stdev_x = sd(x),
     mean_y = mean(y),
     stdev_y = sd(y)
   )
 ```
+
+
+
+Visualize the Data
 ```{r}
 ansc %>% ggplot(aes(x, y, color = dataset)) + geom_point() + facet_wrap(~dataset, ncol = 2)
 ```
 
+
+
+
+Part 2: Two more R Markdown tricks
+
+
+
+View first few rows of iris
 ```{r}
 head(iris)
 ```
 
+
+
+Using kable to align and name the columns
 ```{r}
 kable(head(iris),
       align = c("l", "c", "r", "c", "l"),
@@ -62,10 +98,15 @@ kable(head(iris),
 ```
 
 
+
+View first few rows of airquality
 ```{r}
 head(airquality)
 ```
 
+
+
+Using kable to align and rename the columns
 ```{r}
 kable(head(airquality),
       align = c("r", "r", "c", "c", "l", "l"),
@@ -73,19 +114,37 @@ kable(head(airquality),
 ```
 
 
+
+Quick statistical test to see if there is a significant relationship between weight and feed
 ```{r}
 chicks_lm <- lm(weight ~ feed, data = chickwts)
 summary(chicks_lm)
 ```
 
+
+
+Insert a code chunk and run kable() on chicks_lm. What happens? Write a 1-2 sentence summary of the results.
 ```{r}
 kable(chicks_lm)
 ```
 In the above code an error message comes stating- "Error in as.data.frame.default(x) : cannot coerce class ‘"lm"’ to a data.frame". Kable runs on data in the form of a data frame with rows and columns, the variable- chicks_lm- is not in such format.
 
 
+
+Now try it-
+Use lm on the trees dataset to see if Girth is a function of Height. Assign the results to a suitably-named variable.
+Use xtable() and kable() to produce a table with the results.
 ```{r}
 trees_lm <- lm(Girth ~ Height, data = trees)
 xtable(trees_lm) %>% kable()
 ```
+
+Equations [^Footnote]
+The Chi-square equation
+$$\chi_c^2 = \Sigma\frac{(O_i - E_i)^2}{E_i
+}$$
+
+[^Footnote]: Assignment 3 completed.
+
+
 
