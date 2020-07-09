@@ -8,6 +8,8 @@ editor_options:
 ---
 ```{r}
 library(tidyverse)
+library(knitr)
+library(xtable)
 ```
 
 ```{r}
@@ -44,5 +46,46 @@ ansc %>%
     mean_y = mean(y),
     stdev_y = sd(y)
   )
+```
+```{r}
+ansc %>% ggplot(aes(x, y, color = dataset)) + geom_point() + facet_wrap(~dataset, ncol = 2)
+```
+
+```{r}
+head(iris)
+```
+
+```{r}
+kable(head(iris),
+      align = c("l", "c", "r", "c", "l"),
+      col.names = c("Sepal Length", "Sepal Width", "Sepal Length", "Sepal Width", "Species"))
+```
+
+
+```{r}
+head(airquality)
+```
+
+```{r}
+kable(head(airquality),
+      align = c("r", "r", "c", "c", "l", "l"),
+      col.names = c("Ozone (ppb)", "Solar R (lang)", "Wind (mph)", "Temp (°F)", "Month", "Day"))
+```
+
+
+```{r}
+chicks_lm <- lm(weight ~ feed, data = chickwts)
+summary(chicks_lm)
+```
+
+```{r}
+kable(chicks_lm)
+```
+In the above code an error message comes stating- "Error in as.data.frame.default(x) : cannot coerce class ‘"lm"’ to a data.frame". Kable runs on data in the form of a data frame with rows and columns, the variable- chicks_lm- is not in such format.
+
+
+```{r}
+trees_lm <- lm(Girth ~ Height, data = trees)
+xtable(trees_lm) %>% kable()
 ```
 
