@@ -124,7 +124,7 @@ summary(chicks_lm)
 
 
 Insert a code chunk and run kable() on chicks_lm. What happens? Write a 1-2 sentence summary of the results.
-```{r}
+```{r error=TRUE}
 kable(chicks_lm)
 ```
 In the above code an error message comes stating- "Error in as.data.frame.default(x) : cannot coerce class ‘"lm"’ to a data.frame". Kable runs on data in the form of a data frame with rows and columns, the variable- chicks_lm- is not in such format.
