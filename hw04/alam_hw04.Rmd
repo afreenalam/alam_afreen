@@ -237,30 +237,71 @@ ggplot(data = mpg) +
 #### Section 3.5 questions
 
 **1:** What happens if you facet on a continuous variable? **Note:** Write a prediction, then make and run your code chunk.
-There would be an error because facet separated plots based on distinct categories.
+It would a different plot for each value in the continuous variable.
 
 ```{r}
-
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_wrap(~ cty, nrow = 2)
 ```
 
 
-
 **2:** What do the empty cells in plot with `facet_grid(drv ~ cyl)` mean? How do they relate to this plot?
+They mean that there is no outcome (point) that satisfies both the conditions of drv and cyl. 
 
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = drv, y = cyl))
+```
 
+Unlike the facet_grid plot that breaks plots in all values that the variable acquires, when plotted on cartesian plane the missing 7 cylinders (with 4.5, 5.5,.., 7.5) is also plotted even though under cylinders there is never a 7 recorded. Aside from those rows the intersections where there is no point coincides with the empty plots formed by facet ((cyl,drv): (5,4), (4,r), (5,r)). 
 
 **3:** What plots does the following code make? What does `.` do?
 
+They make a hwy vs displ plot facetted by the variable drv and next with cyl.
 
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(drv ~ .)
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(. ~ cyl)
+```
+The '.' after '~' makes all subplots in rows and '.' before '~' makes all subplots in columns dimension.
 
 **4:** Take the first faceted plot below. What are the advantages to using faceting instead of the colour aesthetic? What are the disadvantages? How might the balance change if you had a larger dataset?
 
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+```
 
+Faceting makes it easier to see where the distribution of an individual category lies on the plot. It is hard to see extent of overlap between categories. For a larger dataset facet would be more beneficial as with color aesthetic more number of points on one plot will cause overlapping to occur and with more colors they would become difficult to distinguish from each other.
 
 **5:** Read `?facet_wrap`. What does `nrow` do? What does `ncol` do? What other options control the layout of the individual panels? Why doesn’t `facet_grid()` have nrow and ncol argument?
 
+The 'nrow' sets the number of rows the subplots would be arranged in. The 'ncol' sets the number of columns the subplots would be arranged in. Layout of an individual panel may be changed by-scales, 
+shrink, labeller, 
+#
+
+
+
+
+
+
+
+
+
+#
+The facet_grid uses two variable. Based on their position before or after '~' it already chooses the number of rows and columns based on levels of variable assigned to each position. 
+
 
 **6:** When using `facet_grid()` you should usually put the variable with more unique levels in the columns. Why?
+
+This is so because the entire plot is rectangular and is longer on the horizontal side. The variable with more levels would get more space to be distributed.
 
 ### Section 3.6: Geometric objects
 
