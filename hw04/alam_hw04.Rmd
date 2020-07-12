@@ -86,35 +86,162 @@ The scatter plot shows the type of drive train each type of car may use. This is
 
 ### Section 3.3: Aesthetic mappings
 
+Assign aesthetic level 'color' to class in hwy vs displ scatter plot.
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+```
+
+Assign aesthetic level 'size' to class in hwy vs displ scatter plot.
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, size = class))
+```
+
+On left map 'class' to 'alpha' aesthetic and on right map 'class' to 'shape' aesthetic. 
+```{r}
+# Left
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, alpha = class))
+
+# Right
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, shape = class))
+```
+
+Make all points in hwy vs displ scatter plot blue.
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
+```
+
 
 #### Section 3.3 questions
 
 **1:** What’s gone wrong with this code? Why are the points not blue?
 
+Here the character string "blue" is assigned to all points and shows in default color- red. (If color aesthetic is assigned to variable within mpg it would show more colors assigned to other levels of the variable, here the character string only has one level- itself- so all are one color)
+The 'color' should be outside aes() argument as it is set manually for the points to be blue.
+
 
 **2:** Which variables in `mpg` are categorical? Which variables are continuous? (*Hint:* type `?mpg` to read the documentation for the dataset). How can you see this information when you run mpg?
+
+By running the following code one can find the required information-
+
+```{r}
+?mpg
+```
+This opens a tab under Help which describes the variables and the nature of data.
+The variables with set and limited number of categories/values are called categorical variables.
+The variables that can have unlimited values are continuous variables.
+Categorical variables- manufacturer, model, year, cyl, trans, drv, fl, class.
+Continuous variables- displ, cty, hwy.
 
 
 **3:** Map a continuous variable to color, size, and shape. How do these aesthetics behave differently for categorical vs. continuous variables? **Note:** You need several code chunks here to answer this question.
 
+Continuous variable- cty (Left)
+
+categorical variable- fl (Right)
+
+# By color
+
+```{r}
+# Left- continuous variable
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = cty))
+
+# Right- categorical variable
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = fl))
+```
+The continuous variable is assigned colors on a  continuous gradient of a single color (depending on order on the scale) whereas categorical variable is assigned distinct colors (unless it is ordered, then it is similar to continuous variable).
+
+# By size
+
+```{r}
+# Left- continuous variable
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = cty))
+
+# Right- categorical variable
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = fl))
+```
+
+The legend in continuous variable only gives few landmarks for scale and asks us to approximate the values falling in between whereas, in categorical variable the use of size is advised against, since it is not ordered, and each category is given a dot size (unless it is ordered, then legend similar to continuous variable). 
+
+# By shape
+
+```{r error = TRUE}
+# Left- continuous variable
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, shape = cty))
+
+# Right- categorical variable
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, shape = fl))
+```
+The continuous variable plot shows an error because it has way more values that shapes available. 
+The categorical variable shows a plot with different shapes assigned to each category (unless it is ordered like in 'year' then it shows an error).
 
 **4:** What happens if you map the same variable to multiple aesthetics?
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, shape = fl, color = fl))
+```
+If ggplot is able to make the plot with each aesthetic of the variable individually it will be able to make a plot with both aesthetics of the same variable in one plot. 
 
 
 **5:** What does the stroke aesthetic do? What shapes does it work with? (*Hint:* use `?geom_point`)
 
+Stroke changes the size of the border for shapes (21-25). These are filled shapes in which the color and size of the border can differ from that of the filled interior of the shape.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), stroke = 1, shape = 21)
+```
 
 
 **6:** What happens if you map an aesthetic to something other than a variable name, like `aes(colour = displ < 5)`?
 
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = displ < 5))
+```
+It acts as a logical variable and assigns the points two colors on whether the condition is true or false.
 
 ### Section 3.5: Facets
 
+Facet the plot by single discrete variable- 'class'.
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_wrap(~ class, nrow = 2)
+```
+
+Facet the plot using two variables - 'drv' and 'cyl'.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_grid(drv ~ cyl)
+```
 
 
 #### Section 3.5 questions
 
 **1:** What happens if you facet on a continuous variable? **Note:** Write a prediction, then make and run your code chunk.
+There would be an error because facet separated plots based on distinct categories.
+
+```{r}
+
+```
 
 
 
