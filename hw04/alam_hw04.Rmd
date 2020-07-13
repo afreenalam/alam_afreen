@@ -468,25 +468,117 @@ ggplot(data = mpg, aes(x = displ, y = hwy)) +
 
 ### Section 3.8 Position adjustments
 
+Color bar charts using color and fill.
+
+```{r}
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, color = cut)) 
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, fill = cut))
+```
+
+Assign variable 'clarity' to aesthetic 'fill'
+
+```{r}
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, fill = clarity))
+```
+
+Use position = "identity" with alpha then fill.
+
+```{r}
+ggplot(data = diamonds, mapping = aes(x = cut, fill = clarity)) + 
+  geom_bar(alpha = 1/5, position = "identity")
+ggplot(data = diamonds, mapping = aes(x = cut, colour = clarity)) + 
+  geom_bar(fill = NA, position = "identity")
+```
+
+Use position = "fill" to compare proportions
+
+```{r}
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "fill")
+```
+
+Use position = "dodge" to overlap objects directly beside one another.
+
+```{r}
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "dodge")
+```
+
+Add some random noise to overcome overplotting using position ="jitter"
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), position = "jitter")
+```
 
 
 #### Section 3.8 Questions
 
-**1:** What is the problem with this plot? How could you improve it. *Hint:* Remember the size of the `mpg` data set from earlier in this exercise. Does the number of points seem correct? **Note:** Write the code to improve it. 
+**1:** What is the problem with this plot? How could you improve it. *Hint:* Remember the size of the `mpg` data set from earlier in this exercise. Does the number of points seem correct? **Note:** Write the code to improve it.
+
+The plot has significantly less points as the data (which has 234) due to overplotting. Also we cannot see distribution of data points on the dots.
+It could be improved using jitter which adds a small amount of random noise to each point.
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_point(position = "jitter")
+```
 
 
 **2:** What parameters to `geom_jitter()` control the amount of jittering?
+The parameters- width and  height.
+
+**3:** Compare and contrast `geom_jitter()` with `geom_count()`.
+
+geom_jitter() is used on continuous data and adds randomness to data points which inturn shows more plot points and gives a clearer idea about distribution of data points.
+geom_count() is useful on discrete data where it counts the number of observations each point then maps count to point area with corresponding size of dots. Also, it adds a legend of sizes of dots compared to number of points 
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_point()
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_jitter()
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_count()
+```
 
 
-**3:** Compare and contracts `geom_jitter()` with `geom_count()`.
+**4:** What is the default position adjustment for `geom_boxplot()`? Create a visualization of the `mpg` dataset that demonstrates it.
+The default position is "dodge2". Visualization-
 
+```{r}
+ggplot( data = mpg, aes(x = drv, y = hwy, color = class )) +
+  geom_boxplot()
+```
+Here plots are moved adjacent and do not overlap (i.e. even though plots have same 'drv' category they fall besides each other and not on line of the same nick in x axis). 
 
-**4:** What is the default position adjustement for `geom_boxplot()`? Create a visualization of the `mpg` dataset that demonstrates it.
+The same box plot with a different position-
 
+```{r}
+ggplot( data = mpg, aes(x = drv, y = hwy, color = class )) +
+  geom_boxplot(position = "identity")
+```
+Here plots overlap.
 
 ### Section 3.9: Coordinate systems
 
 **Note:** Read about and do only the code chunk associated with `coord_flip()`. `coord_flip()` is a great layer to use when you have categorical data with longish names as it makes the text easier to read.
+
+Create a boxplot and the use coord_flip() on it
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot()
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot() +
+  coord_flip()
+```
+
+
+
 
 ### Section 3.10: The layered grammar of graphics
 
