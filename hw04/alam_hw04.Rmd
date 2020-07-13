@@ -283,19 +283,7 @@ Faceting makes it easier to see where the distribution of an individual category
 
 **5:** Read `?facet_wrap`. What does `nrow` do? What does `ncol` do? What other options control the layout of the individual panels? Why doesn’t `facet_grid()` have nrow and ncol argument?
 
-The 'nrow' sets the number of rows the subplots would be arranged in. The 'ncol' sets the number of columns the subplots would be arranged in. Layout of an individual panel may be changed by-scales, 
-shrink, labeller, 
-#
-
-
-
-
-
-
-
-
-
-#
+The 'nrow' sets the number of rows the subplots would be arranged in. The 'ncol' sets the number of columns the subplots would be arranged in. order of the individual panels may be changed by- 'dir' and 'as.table'.
 The facet_grid uses two variable. Based on their position before or after '~' it already chooses the number of rows and columns based on levels of variable assigned to each position. 
 
 
@@ -305,45 +293,173 @@ This is so because the entire plot is rectangular and is longer on the horizonta
 
 ### Section 3.6: Geometric objects
 
+Make two plots- on the left using geom_point and on the right using geom_smooth.
+
+```{r}
+# left
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+
+# right
+ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+```
+
+Plot a graph using 'linetype' aesthetic for variable 'drv'.
+
+```{r}
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv))
+```
+
+Make three plots one with just geom_smooth, one with 'group' and one with 'color'. Remember to remove legends.
+
+```{r}
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+              
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, group = drv))
+    
+ggplot(data = mpg) +
+  geom_smooth(
+    mapping = aes(x = displ, y = hwy, color = drv),
+    show.legend = FALSE
+  )
+```
+
+Make a plot that has points and line i.e. using 'geom_point' and 'geom_smooth'.
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+```
+
+Make the previous graph using global mapping
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point() +
+  geom_smooth()
+```
+
+In the previous map add the aesthetic 'color' to the points according to variable 'class'.
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point(mapping = aes(color = class)) +
+  geom_smooth()
+```
+
+In the above plot make the local data override the global data, select the subcompact cars in geom_smooth
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(color = class)) + 
+  geom_smooth(data = filter(mpg, class == "subcompact"), se = FALSE)
+```
 
 
 #### Section 3.6.1 Questions
 
 **1:** What geom would you use to draw a line chart? A boxplot? A histogram? An area chart? **Note:** You will have to make some types of these charts in Part 2 of this assignment.
-
+The geom_line(), geom_boxplot(), geom_histogram(),  geom_area() respectively.
 
 **2:** Run this code in your head and predict what the output will look like. Then, run the code in R and check your predictions.
 
+It would be a hwy vs displ plot with points and lines similarly colored according to 'class' variable. Also, a legend would be present. 
 
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+
+The prediction is correct.
 
 **3:** What does `show.legend = FALSE` do? What happens if you remove it?
 **Note:** Skip the "Why do you think I used it earlier in the chapter?" question.
 
+It removes the legend when arguments other that 'group' (x and y) are used. If removed the legend would appear besides the plot.
 
 **4:** What does the `se` argument to `geom_smooth()` do?
 
+It displays the confidence interval around the line in 'geom_smooth()'. It is set TRUE by default.
 
 **5:** Will these two graphs look different? Why/why not?
+
+No, they both do the same thing, just upper one uses global mapping and the other one puts mapping in geom.
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy))
+```
 
 
 **6:** Recreate the R code necessary to generate the following graphs. **Note:** Enter a separate code chunk for each graph, numbered 1 to 6, starting row-wise at upper left. 
 
 1: upper left.
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(size = 3) + 
+  geom_smooth(size = 1.4, se = FALSE)
+
+```
+
 
 
 2: upper right.
 
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, group = drv)) +
+  geom_smooth(size = 1.4, se = FALSE) +
+  geom_point(size = 3) 
+  
+```
+
 
 3: middle left.
 
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) +
+  geom_smooth(size = 1.4, se = FALSE) +
+  geom_point(size = 3)
+  
+```
 
 4: middle right.
 
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point(size = 3, mapping = aes(color = drv) ) +
+  geom_smooth(size = 1.4, se = FALSE, show.legend = FALSE)
+```
 
 5: lower left.
 
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point(size = 3, mapping = aes(color = drv)) +
+  geom_smooth(size = 1.4, se = FALSE, mapping = aes(linetype = drv))
+```
+
+
 
 6: lower right. *Hint:* Read the help file for `geom_point`. Use `shape = 21`, `stroke = 2`, and `size = 3`.
+
+```{r}
+ggplot(data = mpg, aes(x = displ, y = hwy)) +
+  geom_point(shape = 21, size = 4, stroke = 2, color = "white") +
+  geom_point(mapping = aes(colour = drv), size = 3)
+```
+
+# Note : All graphs were sized down to match size of graph in question and then size of points and line were determined.
 
 ### Section 3.7: Statistical transformations.
 
@@ -351,6 +467,7 @@ This is so because the entire plot is rectangular and is longer on the horizonta
 
 
 ### Section 3.8 Position adjustments
+
 
 
 #### Section 3.8 Questions
