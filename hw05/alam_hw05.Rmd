@@ -1,0 +1,254 @@
+---
+title: "HW05 R Notebook"
+author: "Afreen Alam"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+Load tidyverse package
+
+```{r}
+library(tidyverse)
+```
+
+#### Plot 1
+
+Load and view format of dataset 'trees'.
+
+```{r}
+data(trees)
+?trees
+```
+
+Plot type: scatterplot
+Dataset: trees
+x-axis: height
+y-axis: girth
+
+```{r}
+ggplot(data = trees) + 
+  geom_point(mapping = aes(x = Height, y = Girth))
+```
+General trend seems to be that as height increases so does girth.
+
+
+#### Plot 2
+
+Make vector called 'year' for 1821 to 1934
+
+```{r}
+year <- c(1821:1934)
+```
+
+Load and view format of dataset 'trees'.
+
+```{r}
+data(lynx)
+?lynx
+```
+
+Look at the class() of the lynx dataset.
+
+```{r}
+class(lynx)
+```
+
+Convert 'lynx' to vector and assign to 'pelts'.
+
+```{r}
+pelts <- as.vector(lynx)
+```
+
+Make a dataframe called lynx_pelts from above two vectors.
+
+```{r}
+lynx_pelts <- data.frame(year, pelts)
+```
+
+Plot type: linegraph
+Dataset: lynx_pelts (see above)
+x-axis: year
+y-axis: pelts
+Make the line color maroon. Maroon is one of the default R colors.
+
+```{r}
+ggplot(data = lynx_pelts) + 
+  geom_line(mapping = aes(x = year, y = pelts), color = "Maroon")
+```
+
+Number of lynx trappings varied significantly throughout the years. It increases rapidly then decreases rapidly. The highest peak is in year 1904 with 6991 trappings.
+
+#### Plot 3 
+
+Load and view format of dataset 'iris'.
+
+```{r}
+data("iris")
+?iris
+```
+
+Plot type: scatterplot
+Dataset: iris
+x-axis: petal length
+y-axis: petal width
+Point color and shape by species. You do not have to use fillable shapes.
+Point size of 2
+Add a labs layer to change the x- and y-axis labels so that they do not have periods in the names (i.e., Petal Length, Petal Width).
+
+```{r}
+ggplot(data = iris) + 
+  geom_point(mapping = aes(x = Petal.Length, y = Petal.Width, shape = Species, color = Species), size = 2) +
+  labs(x = "Petal Length", y = "Petal Width")
+```
+
+As the petal length increases, petal width increases. *Setosa* has the smallest petal width and length. There is slight overlap between *Versicolor* and *Virginica* but overall *Virginica* has longest petal width and length.
+Also, all these species appear to have very similar slopes.
+
+##### Plots 4 and 5
+
+Load and view format of dataset 'msleep'.
+
+```{r}
+data("msleep")
+?msleep
+```
+
+This requires two code chunks, which will be nearly identical
+
+Plot type: Violin plot (look up geom_violin)
+Dataset: msleep
+x-axis: vore
+y-axis: sleep_rem
+fill = grayXX where XX is either 30 or 70.
+In your description, describe in your own words what violin plots display (you can search the interwebs), and what is the difference among the two versions of gray shading. Hint: the grays extend from gray0 to gray100. You can learn more about colors in R from this PDF file.
+
+```{r}
+ggplot(data = msleep) +
+  geom_violin(mapping = aes(x = vore, y = sleep_rem), fill = "gray30")
+ggplot(data = msleep) +
+  geom_violin(mapping = aes(x = vore, y = sleep_rem), fill = "gray70")
+```
+
+Violin plot is a blend of boxplot and density distribution of data. They can show if there is more than one mode (peak) in the data. 
+The color gray30 is darker than gray70. Both colors are opaque. 
+
+
+#### Plot 7
+
+Plot type: boxplot
+Dataset: msleep
+x-axis: order
+y-axis: sleep_total
+use coord_flip()
+
+```{r}
+ggplot(data = msleep) + 
+  geom_boxplot(mapping = aes(x = order, y = sleep_total)) +
+  coord_flip()
+```
+
+The median and range of total sleep varies greatly among orders (could be because of small sample size or irregular sample size among orders). Some orders show large range of data like Carnivora (max) and Rodentia, while others have a very short range like Lagomorpha and Monotremata. Also, note that height (vertical) of all boxes is the same. 
+There are also 2 outliers present and represented as points in the plot.
+
+
+#### Plot 8
+
+Plot type: boxplot with points
+Dataset: msleep
+x-axis: conservation
+y-axis: awake
+You must have a boxplot layer, a point layer, and a jitter layer.
+color by conservation status.
+You may use coord_flip but it is not required. Try both and choose the one you think looks best.
+Add a lab layer to change both axis labels so each starts with an upper-case letter.
+Search the internet to find out how to change the legend title to Conservation. Make that change. (Do not try to change the actual legend entries like “cd” and “vu”). Note: This can be done a couple of different ways but scale_color_discrete() is one good way.
+
+```{r}
+ggplot(data = msleep, mapping = aes(x = conservation, y = awake, color = conservation)) +
+  geom_boxplot() +
+  geom_point() +
+  geom_jitter() +
+  labs(x = "Conservation", y = "Awake") +
+  coord_flip() +
+  scale_color_discrete(name = "Conservation")
+```
+
+The median and range of total hours awake varies greatly among distinct classifications of conservation (could be because of small sample size or irregular sample size among classifications). Here, one can see approximately how many animals of each category of conservation were counted, their distribution, and the median. Overplotting was overcome using jitter (notice how points do not fall on a single horizontal line assigned to each category).
+The category with the longest range is 'lc' (Least Concern) and the shortest range is 'cd' (Conservation Dependent) which also has the highest median.
+
+
+#### Plots 9 and 10.
+
+Make two scatterplots of your choice, with the following constraints.
+
+One should plot any one of the “sleep” or “awake” variables against body weight. The other should plot any one of the “sleep” or “awake” variables against brain weight.
+In each plot, color the points by one of the nominal data categories. Use a different category for each plot.
+Apply facet_wrap() to at least one of the plots using one of the nominal variables. You decide whether you use 2 or 3 columns. Hint: use one of the nominal variables with relatively few different types for wrapping. Explore: What happens if you use a nominal variable like genus, with lots of types?
+You should try a few versions of each graph until you find combinations that you think show some clear trends.
+Describe the patterns or trends you see in each graph.
+
+Plot sleep_total vs bodywt scatter plot facetted according to conservation and points colored according to vore
+
+```{r}
+ggplot(data = msleep, mapping = aes(x = bodywt, y = sleep_total, color = vore)) +
+  facet_wrap(~conservation, ncol = 3) +
+  geom_point()
+```
+This plot shows that almost the entire data has body weight less than 500 kg. The ones with highest body weight tend to be herbivores who also happen to get less than 5 hours of total sleep.
+Most organisms fall in the NA and lc category of conservation. The subplot in cd seems the least scattered in times of body weight and total sleep.
+
+
+What happens if you use a nominal variable like genus, with lots of types?
+```{r}
+ggplot(data = msleep, mapping = aes(x = bodywt, y = sleep_total, color = vore)) +
+  facet_wrap(~genus, ncol = 3) +
+  geom_point()
+```
+There are too many subplots and not enough points to see any trend.
+
+
+Plot awake vs brainwt scatterplot and color points based on order.
+
+```{r}
+ggplot(data = msleep, mapping = aes(x = brainwt, y = awake, color = order)) +
+  geom_point()
+```
+
+This graph shows that the relation between brain weight and hours awake is not linear. It shows that majority of mammals in this sample have brain weight close to 0 kg. 
+The ones with greater brain weight tend to stay awake longer. 
+The order that shows significantly large brain weight and long hours awake is Proboscidea. The organisms awake longer than 17 hours have brain weight closer to 0.5 kg than 0 kg.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
