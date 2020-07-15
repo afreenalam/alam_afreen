@@ -221,34 +221,3 @@ The ones with greater brain weight tend to stay awake longer.
 The order that shows significantly large brain weight and long hours awake is Proboscidea. The organisms awake longer than 17 hours have brain weight closer to 0.5 kg than 0 kg.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
