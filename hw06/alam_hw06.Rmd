@@ -334,6 +334,53 @@ You do not have to run any of the examples in this section.
 
 Read from the start of the chapter through 12.3.1. Run the examples in section 12.3.1 (Longer), including the example with `left_join()`. We'll cover joins later. Skip section 12.3.2.
 
+12.3.1
+
+Making Table 4a
+
+```{r}
+table4a <- read_csv("country,1999,2000
+Afghanistan,745,2666
+Brazil,37737,80488
+China,212258,213766")
+table4a
+```
+
+Make the column names variables not values
+
+```{r}
+table4a %>% 
+  pivot_longer(c(`1999`, `2000`), names_to = "year", values_to = "cases")
+```
+
+Making table 4b
+
+```{r}
+table4b <- read_csv("country,1999,2000
+Afghanistan,19987071,20595360
+Brazil,172006362,174504898
+China,1272915272,1280428583")
+table4b
+```
+
+pivot_longer table 4b with values_to = "population"
+
+```{r}
+table4b %>% 
+  pivot_longer(c(`1999`, `2000`), names_to = "year", values_to = "population")
+```
+
+Combine table 4a and 4b into a single tibble
+
+```{r}
+tidy4a <- table4a %>% 
+  pivot_longer(c(`1999`, `2000`), names_to = "year", values_to = "cases")
+tidy4b <- table4b %>% 
+  pivot_longer(c(`1999`, `2000`), names_to = "year", values_to = "population")
+left_join(tidy4a, tidy4b)
+```
+
+
 #### 12.3.3 Questions
 
 **2:** Why does this code fail? Fix it so it works.
@@ -343,6 +390,15 @@ table4a %>%
   pivot_longer(c(1999,2000), names_to = "year", values_to = "cases")
 #> Error in inds_combine(.vars, ind_list): Position must be between 0 and n
 ```
+
+It fails because 1999 and 200 are non-syntactic names (because they don’t start with a letter) so we have to surround them in backticks.
+
+Fixed code-
+```{r}
+table4a %>% 
+  pivot_longer(c(`1999`, `2000`), names_to = "year", values_to = "cases")
+```
+
 
 Skip the rest of Chapter 12. On to the last chapter.
 
