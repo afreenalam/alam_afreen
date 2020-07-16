@@ -209,35 +209,94 @@ Do *not* run the first code chunk of this section, which begins with `heights <-
 
 Enter and run the remaining chunks in this section.
 
+Supply an inline csv file.
+
+```{r}
+read_csv("a,b,c
+1,2,3
+4,5,6")
+```
+
+Skip a few lines of metadata at the top of the file.
+
+```{r}
+read_csv("The first line of metadata
+The second line of metadata
+x,y,z
+1,2,3", skip = 2)
+
+read_csv("# A comment I want to skip
+x,y,z
+1,2,3", comment = "#")
+```
+
+Make the data not have column names
+
+```{r}
+read_csv("1,2,3\n4,5,6", col_names = FALSE)
+```
+
+Make a character vector the column names
+
+```{r}
+read_csv("1,2,3\n4,5,6", col_names = c("x", "y", "z"))
+```
+
+Make value '.' stand for missing values in your data
+
+```{r}
+read_csv("a,b,c\n1,2,.", na = ".")
+```
+
 
 #### 11.2 Questions
 
 **1:** What function would you use to read a file where fields were separated with "|"?
-
+read_delim() should be used. Here delim = "|".
 
 
 **2:** (This question is modified from the text.) Finish the two lines of `read_delim` code so that the first one would read a comma-separated file and the second would read a tab-separated file. You only need to worry about the delimiter. Do not worry about other arguments. Replace the dots in each line with the rest of your code. 
 
 # Comma-separated
-`file <- read_delim("file.csv", ...)`
+`file <- read_delim("file.csv", delim = ",")`
 
 # Tab-separated
-`file <- read_delim("file.csv", ...)`
+`file <- read_delim("file.csv", delim = "\t")`
 
 
 **3:** What are the two most important arguments to `read_fwf()`? Why?
+The two common arguments are fwf_widths() and fwf_positions() .Widths of files can be specified with fwf_widths() and their position with fwf_positions().
 
+Also, read_table() reads a common variation of fixed width files where columns are separated by white space.
 
 **4:** Skip this question
 
 
 **5: ** Identify what is wrong with each of the following inline CSV files. What happens when you run the code?
 
+1.A column is missing in the first row. Only two columns made based on first row, values under third column discarded
+
 ```{r}
 read_csv("a,b\n1,2,3\n4,5,6")
+```
+
+2.Uneven number of columns. Number of columns set by first row. Missing value filled by NA. Extra value in row three left out.
+
+```{r}
 read_csv("a,b,c\n1,2\n1,2,3,4")
+```
+
+3.Only one output in second row for 2 columns. Also, there is an open quote infront of 1. Value under second column in second row filled as NA
+```{r}
 read_csv("a,b\n\"1")
+```
+
+4.Nothing is wrong. (Though the first and third row have similar values). The variables are character vectors.
+```{r}
 read_csv("a,b\n1,2\na,b")
+```
+5.Semicolons used instead of commas. Makes one column and substitutes both values under it as one. Could use read_csv2. 
+```{r}
 read_csv("a;b\n1;3")
 ```
 
