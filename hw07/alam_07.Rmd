@@ -1,0 +1,112 @@
+---
+title: 'HW07: Data Importing and Wrangling 1'
+author: "Afreen Alam"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+Load the packages and file path.
+
+```{r}
+library(tidyverse)
+library(here)
+```
+
+
+#### Limpets
+
+Requirements:
+
+Data file: limpets.csv.
+
+Are the data tidy?
+Yes, all three columns are unique variables- Length, Site, Protected- each observation is a row.
+
+Use the col_types argument. The three column types are numeric, character, and character.
+
+```{r}
+limpets_data <- read_csv(here("data", "limpets.csv"), col_types = "ncc")
+```
+
+Make the Sites column an ordered factor with these levels:
+PBL, KNRM, VBG, WP, PF, DP, SIO, CTZ1, CTZ2, CNM
+
+```{r}
+limpets_data$Site <- factor(limpets_data$Site, ordered = TRUE, levels = c("PBL", "KNRM", "VBG", "WP", "PF", "DP", "SIO", "CTZ1", "CTZ2", "CNM"))
+```
+
+PBL is the northern most site (Pebble Beach). CNM is the southernmost site (Cabrillo National Monument).
+
+Make a boxplot of length (in millimeters) for each site, colored by protected status.
+
+Change the axis labels so they begin with capital letters. The y-axis should include the unit of measurement in parentheses.
+
+Note: Both axes labels already begin with capital letters. 
+
+
+```{r}
+limpets_data %>% 
+  ggplot() +
+  geom_boxplot(aes(x = Site, y = Length, color = Protected)) +
+  labs(y = "Length(in millimeters)")
+```
+
+In your description, tell which two sites have outliers and whether the protected sites tend to have larger or smaller limpets.
+
+The two sites that have outliers are WP and DP. Protected sites tend to have larger limpets than unprotected ones.
+
+#### Roseate Terns
+
+Data: roseate_terns.txt
+
+```{r}
+roseate_data <- read_tsv(here("data", "roseate_terns.txt"))
+```
+
+Are the data tidy?
+No, the sites are individual columns rather than being under one variable of "Sites".
+
+```{r}
+(roseate_tidy <- roseate_data %>% 
+  pivot_longer(c(AR, AL, AC, BR, BL,BC, JR, JL, JC ), names_to = "Sites", values_to = "Population"))
+```
+
+Variables "Population" and "Sites" assigned. Data tidied. New data is 'roseate_tidy' 
+
+Use filter to remove sites with missing counts.
+
+```{r}
+na_rows <- filter(roseate_tidy, is.na(Population)) 
+
+```
+
+
+```{r}
+filter(roseate_data$Population != NA)
+```
+
+
+Make a line plot of population size over time.
+Change the axis labels as appropriate (you have to start thinking about what is appropriate).
+Which population(s) obviously increased in size between 1992 and 2016? Which population(s) obviously decreased in size during that time?
+Some lines have breaks in them. That is, they are not continuous across all years. Why?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
