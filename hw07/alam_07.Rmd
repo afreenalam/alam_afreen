@@ -296,7 +296,7 @@ darters_plot %>%
   facet_grid(Riffle ~ Species)
 ```
 Whichever varaible is before "~" in facet_grid() is split on the y axis (row wise) and the one that comes after "~" gets split column wise.
-Average length of each species varies in each riffle. *caeruleum* and *spectabile* approximately the same length (with each other) but vary greatly in length between riffles.  They are longer in 1 and shorter in 2 compared to *blennioides*
+Average length of each species varies in each riffle. *caeruleum* and *spectabile* approximately the same length (with each other) but vary greatly in length between riffles.  They are longer in 1 and shorter in 2 compared to *blennioides*.
 
 
 
