@@ -68,6 +68,11 @@ The two sites that have outliers are WP and DP. Protected sites tend to have lar
 
 Data: roseate_terns.txt
 
+```{r}
+roseate_data <- read_tsv(here("data", "roseate_terns.txt"))
+```
+
+
 Are the data tidy?
 No, sites are individual variables (columns) not one variable. Also, one observation is not one row.
 
@@ -252,8 +257,9 @@ Arrange the data by id.
 
 
 ```{r}
-(darters_plot <- darters_data %>% 
+(darters_plot <- darters_data %>%
   filter(Species == "blennioides" | Species == "caeruleum" | Species == "spectabile") %>% 
+   drop_na() %>% 
   select(ID:majsub, majtype) %>% 
   rename(major_substrate = majsub, major_type =  majtype) %>% 
   arrange(ID))
