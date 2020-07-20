@@ -64,83 +64,19 @@ The two sites that have outliers are WP and DP. Protected sites tend to have lar
 
 
 
-##########################
-
-
-
-
 #### Roseate Terns
 
 Data: roseate_terns.txt
 
-```{r}
-roseate_data <- read_tsv(here("data", "roseate_terns.txt"))
-```
-
 Are the data tidy?
-No, the sites are individual columns rather than being under one variable of "Sites".
-
-```{r}
-(roseate_tidy <- roseate_data %>% 
-  pivot_longer(c(AR, AL, AC, BR, BL,BC, JR, JL, JC ), names_to = "Sites", values_to = "Population"))
-roseate_tidy$Sites <- factor(roseate_tidy$Sites)
-```
-
-Variables "Population" and "Sites" assigned. Data tidied. New data is 'roseate_tidy' 
-
-
-Use filter to remove sites with missing counts.
-
-Find rows that have NA and sites (levels) that have them.
-
-```{r}
-(na_rows <- filter(roseate_tidy, is.na(Population)))
-(na_rows$Sites <- factor(na_rows$Sites))
-(nullsites <-  levels(na_rows$Sites))
-
-```
-
-```{r}
-filter(roseate_tidy, Sites != nullsites)
-```
-
-Data with sites with all readings.
-
-```{r}
-(roseate_new <- filter(roseate_tidy, Sites != "AL" & Sites != "BL" & Sites != "JL"))
-```
-
-Make a line plot of population size over time.
-
-Change the axis labels as appropriate (you have to start thinking about what is appropriate).
-
-```{r}
-roseate_new %>% 
-ggplot() +
-  geom_line(mapping = aes(x = year, y = Population, color = Sites)) +
-  labs(x = "Years")
-```
-
-
-
-Which population(s) obviously increased in size between 1992 and 2016? Which population(s) obviously decreased in size during that time?
-
-Populations that increased in size-
-AR,
-Populations that increased in size-
-
-Some lines have breaks in them. That is, they are not continuous across all years. Why?
-
-
-
-
-
-###### New start
+No, sites are individual variables (columns) not one variable. Also, one observation is not one row.
 
 ```{r}
 (roseate_tidy <- roseate_data %>% 
   pivot_longer(c(AR, AL, AC, BR, BL,BC, JR, JL, JC ), names_to = "Sites", values_to = "Population"))
 ```
+roseate_tidy is tidy data.
+
 
 Use filter to remove sites with missing counts.
 
@@ -169,9 +105,9 @@ JR, BR
 
 Some lines have breaks in them. That is, they are not continuous across all years. Why?
 
-Some data was missing (NA) so it was not plotted, hence why the lines are not continuous. 
+Some observations are missing (NA) so it was not plotted, hence why the lines are not continuous. 
 
-#########################
+
 
 #### Blacklip Abalone
 
@@ -184,7 +120,7 @@ abalone_data <- read_csv(here("data", "abalone.csv"))
 Tidy version (without first column)
 
 ```{r}
-abalone_data <- select(abalone_data, Type:Rings) 
+(abalone_data <- select(abalone_data, Type:Rings)) 
 ```
 
 Boxplot of height differences among the three types.
@@ -222,7 +158,7 @@ abalone_filter %>%
   geom_point(aes(x = Rings, y = Height, color = Type))
 ```
 
-Immatures on an average are smaller than M and F . Male and Females largely overlap. No, not all females and males are larger than immatures.
+Immatures on an average are smaller than M and F . Male and Females largely overlap.It is hard to tell from th escatterplot which type is the largest. No, not all females and males are larger than immatures.
 
 
 Chunk 4: Are there really immatures with more than five rings with zero height? Srsly? - Print the records of the individuals with zero height. - Most likely, the two zero height values are mistakes made during data recording. This time, instead of filtering them, assign NA (missing data) to those two records. Repolot the data to ensure the two observations are not included in the graph.
@@ -235,21 +171,18 @@ filter(abalone_filter, Height == 0)
 
 
 ```{r}
-abalone_filter[, "Height"][abalone_filter[, "Height"] == 0] <- NA
+abalone_filter[abalone_filter$Height == 0, 'Height'] <- NA
+```
+
+
+```{r}
 abalone_filter %>% 
   ggplot() +
   geom_point(aes(x = Rings, y = Height, color = Type))
 abalone_filter
 ```
+The two observations are not included.
 
-```{r}
-subset(abalone_filter, Height == NA)
-```
-
-
-#####################
-
-###################
 
 Chunk 5: Make two scatterplots of your choice, between any two pairs of continuous variables that make sense to show as scatterplots. Color, shape, or both should distinguish the three types.
 
@@ -258,37 +191,26 @@ Chunk 5: Make two scatterplots of your choice, between any two pairs of continuo
 ```{r}
 abalone_filter %>% 
   ggplot() + 
-    geom_point(mapping = aes(x = Diameter, y = Rings, color = Type))
+    geom_point(mapping = aes(x = Diameter, y = Rings, color = Type)) 
 
 abalone_filter %>% 
 ggplot() +
-    geom_point(mapping = aes(x = ShellWeight, y = WholeWeight, color = Type))
+    geom_point(mapping = aes(x = ShellWeight, y = WholeWeight, color = Type))+
+labs(x = "Shell Weight", "Whole weight")
   
 ```
 
-In Rings vs Diameter, the data shows correlation 
+In Rings vs Diameter, the data shows I has less rings and diameter than M and F (which overlap for most of observations).
 
-???????????????????????
-
-###################################
-
-
-
-
-
-
-
-
-
-
-
+In Whole Weight vs Shell Weight I has less Whole Weight and Shell Weight compared to M and F but here the data is less scattered and the overlap between I and the others is less compared to that of the previous graph.   
 
 
 #### Darters
 
+Data: darters.txt
 
 ```{r}
-darters_data <- read_fwf(here("data", "darter.txt"), fwf_widths(c(3, 11, 1, 1, 1, 3, 4, 4, 4, 3,3, 2, 2)), comment = "#")
+darters_data <- read_fwf(here("data", "darter.txt"), fwf_widths(c(3, 11, 1, 1, 1, 3, 4, 4, 4, 3, 3, 2, 2)), comment = "#")
 ```
 
 # 1-3 specimen id
@@ -305,9 +227,77 @@ darters_data <- read_fwf(here("data", "darter.txt"), fwf_widths(c(3, 11, 1, 1, 1
 # 39-40 majtype: s = sand, fg = fine gravel, sg = small gravel, lg = large gravel, c = cobble
 # 41-42 mintype: s = sand, fg = fine gravel, sg = small gravel, lg = large gravel, c = cobble, z = no present
 
+Data: darters.txt
+Column names and widths are included in the file. You can use whatever column names you want but adjust accordingly for info below.
+Make riffle an unordered factor with levels 1 and 2.
+
+```{r}
+colnames(darters_data) <-  c("ID", "Species", "Riffle", "Age", "Sex", "Length", "Depth", "Velocity", "Temperature", "majsub", "minsub", "majtype", "mintype")
+
+darters_data$Riffle <- factor(darters_data$Riffle)
+```
+
+Make major_type an ordered factor with levels s, fg, sg, lg, c
+
+```{r}
+darters_data$majtype <- factor(darters_data$majtype, ordered = TRUE, levels = c("s", "fg", "sg", "lg", "c"))
+```
+
+Do these four steps together with the pipe.
+
+Filter to remove rows with “zonale” and “tetrazonum”.
+Remove mintype and minsub columns.
+Rename majsub and majtype to major_substrate and major_type, respectively.
+Arrange the data by id.
+
+
+```{r}
+(darters_plot <- darters_data %>% 
+  filter(Species == "blennioides" | Species == "caeruleum" | Species == "spectabile") %>% 
+  select(ID:majsub, majtype) %>% 
+  rename(major_substrate = majsub, major_type =  majtype) %>% 
+  arrange(ID))
+```
+
+Plot 1 Plot length as a function of depth. Map species to color and shape. What differences do you see between the two riffles?
+
+```{r}
+darters_plot %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Depth, y = Length, color = Species, shape = Species)) +
+  facet_wrap(~ Riffle)
+```
+
+The upstream riffle(1) seems to have less *blennioides* than the downstream riffle(2). 2 has the longest length observations. 1 has more observations at greater depths.
+
+Plot 2: Make a boxplot of length for each of the three species. Which riffle shows the greatest number of outliers?
+
+```{r}
+darters_plot %>% 
+  ggplot() +
+  geom_boxplot(mapping = aes(x = Species, y = Length, color = Species, shape = Species)) +
+  facet_wrap(~ Riffle)
+```
+
+Riffle 2 (downstream) shows the greatest number of outliers.
+
+Plot 3: Make a boxplot of length for major substrate types for each species for each riffle. This will actually be six plots in one! To do this, use facet_grid(species ~ riffle) in place of facet_wrap(). How does the plot change if you switch the order of the argument (riffle ~ species) in the facet_grid() function?
+
+```{r}
+darters_plot %>% 
+  ggplot() +
+  geom_boxplot(mapping = aes(x = major_substrate, y = Length, color = Species, shape = Species)) +
+  facet_grid(Species~ Riffle)
+```
+```{r}
+darters_plot %>% 
+  ggplot() +
+  geom_boxplot(mapping = aes(x = major_substrate, y = Length, color = Species, shape = Species)) +
+  facet_grid(Riffle ~ Species)
+```
+Whichever varaible is before "~" in facet_grid() is split on the y axis (row wise) and the one that comes after "~" gets split column wise.
+Average length of each species varies in each riffle. *caeruleum* and *spectabile* approximately the same length (with each other) but vary greatly in length between riffles.  They are longer in 1 and shorter in 2 compared to *blennioides*
 
 
 
-
-
-
+#########
