@@ -21,12 +21,112 @@ Read [R4ds Chapter 5: Data transformation](https://r4ds.had.co.nz/transform.html
 
 **You do not answer any of the questions this week.** Just read and run all of the examples as noted below. Pay attention to the code you enter for the examples. You will be applying the information in future assignments.
 
+
+Require packages
+
+```{r}
+library(tidyverse)
+library(nycflights13)
+```
+
+
 ***
 ### Section 5.5: Add new variables with `mutate()`
 
 Type and run all of the examples.
 
 Pay careful attention to the useful creation functions in section 5.5.1. 
+
+
+create a narrower dataset and add columns using mutate()
+
+```{r}
+flights_sml <- select(flights,
+                      year:day,
+                      ends_with("delay"),
+                      distance,
+                      air_time
+                      )
+mutate(flights_sml,
+       gain = dep_delay - arr_delay,
+       speed = distance / air_time * 60
+       )
+```
+
+Add more columns using columns just created.
+
+```{r}
+mutate(flights_sml,
+       gain = dep_delay - arr_delay,
+       hours = air_time / 60,
+       gain_per_hour = gain / hours
+       )
+```
+
+Keep only the new variables
+
+```{r}
+transmute(flights,
+          gain = dep_delay - arr_delay,
+          hours = air_time / 60,
+          gain_per_hour = gain / hours
+          )
+```
+
+
+*5.5.1 Useful creation functions*
+
+Modular arithmetic- hour and minute from dep_time
+
+```{r}
+transmute(flights, 
+          dep_time,
+          hour = dep_time %/% 100,
+          minute = dep_time %% 100
+          )
+```
+
+Offsets: using lead() and lag()
+
+```{r}
+(x <- 1:10)
+lag(x)
+lead(x)
+```
+
+Cumulative and rolling aggregates
+
+```{r}
+x
+cumsum(x)
+cummean(x)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
