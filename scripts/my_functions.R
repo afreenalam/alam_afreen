@@ -5,24 +5,26 @@
 
 ### Standard error function
 
-# Write a function called std_err that calculates standard error of the mean.
+# Write a function called std_err that calculates standard error of the mean
 # Standard error = standard deviation / sqrt(sample size)
 
 std_err <- function(values, na.rm = FALSE) {
-# has 2 arguments, one to accept numeric values and other that can remove NA
-    ifelse(na.rm, # test
-         values <- na.omit(values), # if TRUE
-         values) # if FALSE
-  s <- sd(values) # calculates standard deviation
-  n <- length(values) # finds sample size
-  std_err <- s / sqrt(n) # according to formula above
-  return(std_err) # returns result
+# Function has 2 arguments, one to accept numeric values and other that can remove NA
+    ifelse(na.rm, # Test
+         values <- na.omit(values), # If TRUE
+         values) # If FALSE
+  s <- sd(values) # Calculates standard deviation
+  n <- length(values) # Finds sample size
+  std_err <- s / sqrt(n) # According to formula above
+  return(std_err) # Returns result
 }
 
 ### Scaled mass index function
 
 # Write a function called scaled_mass
+
 # It calculates the scaled mass index (SMI)
+
 # The index scales the mass of the bird to the
 # length of the tarsus (part of the leg) so that
 # birds of different sizes can be compared fairly
@@ -38,9 +40,9 @@ std_err <- function(values, na.rm = FALSE) {
 
 # The function has three arguments
 scaled_mass <- function(mass = 0,
-                        # accepts numeric values for mass of birds, default = 0
+                        # Accepts numeric values for mass of birds, default = 0
                         tarsus = 0,
-                        # values for length of tarsus, default = 0
+                        # Values for length of tarsus, default = 0
                         slope = 0) {
                         # Default = 0
 # According to formula above
