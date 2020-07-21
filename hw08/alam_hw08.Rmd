@@ -97,7 +97,7 @@ lead(x)
 Cumulative and rolling aggregates
 
 ```{r}
-x
+x 
 cumsum(x)
 cummean(x)
 ```
