@@ -94,6 +94,8 @@ lag(x)
 lead(x)
 ```
 
+
+############# Problematic
 Cumulative and rolling aggregates
 
 ```{r}
@@ -102,38 +104,73 @@ cumsum(x)
 cummean(x)
 ```
 
+##########################
 
+Rank the numbers in a variable
 
+```{r}
+y <- c(1, 2, 2, NA, 3, 4)
+min_rank(y)
+min_rank(desc(y))
+```
 
+Other variants
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```{r}
+row_number(y)
+dense_rank(y)
+percent_rank(y)
+cume_dist(y)
+```
 
 
 ***
 ### Section 5.6: Grouped summaries with `summarise()`
 
 Read and run all of the examples. Pay careful attention to the useful summary functions. Unless you really like baseball, skip the baseball part of 5.6.3.
+
+
+*5.6 Grouped summaries with summarise()*
+
+Collapses a data frame to a single row using summarise()
+
+```{r}
+summarise(flights, delay = mean(dep_delay, na.rm = TRUE))
+```
+
+Get the average delay per date
+
+```{r}
+by_day <- group_by(flights, year, month, day)
+summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
+```
+
+*5.6.1 Combining multiple operations with the pipe*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ***
 ### Section 5.7: Grouped mutates (and filters)
