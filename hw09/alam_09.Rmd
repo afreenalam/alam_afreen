@@ -160,30 +160,126 @@ Arguments in plot 1 stat_summary not sure?
 ***
 #### Stress and corticosterones in birds
 
+*Import data*
+
+```{r}
+(feathers_data <- read_csv(here("data", "feathers.csv"),
+                          locale = locale(decimal_mark = ",")) %>%
+  rename(capture_date = "Capture Date",
+         day = Date,
+         site = Site,
+         urban_score = "Urba Score",
+         cortF = "CortF ng/mg",
+         cortB = "CortF ng/mm",
+         sex = Sex,
+         smi = SMI,
+         tarsus = Tarsus,
+         mass = Mass,
+         basal_cort = Bas_Cort,
+         stress_cort = Stress_Cort))
+```
+
+*Wrangle data*
+
+Calculate the mean tarsus length of all individuals in the data set, and store it in a variable called mean_tarsus. You should know how to calculate the mean of all values in a column.
+
+```{r}
+(mean_tarsus <- mean(feathers_data$tarsus, na.rm = TRUE))
+```
+
+Use mutate() to log-transform (log()) the body mass (mass) and the tarsus length (tarsus). Save these in new columns as log_mass and log_tarsus, respectively.
+
+```{r}
+(feathers_mutated <- feathers_data %>%
+  mutate(log_mass = log(mass),
+         log_tarsus = log(tarsus)))
+```
+
+Run major_axis <- sma(log_mass ~ log_tarsus, data = <data>). Substitute the name of your imported data for <data>. The sma() function calculates the standardized major axis regression.
+```{r}
+major_axis <- sma(log_mass ~ log_tarsus, data = feathers_mutated)
+```
+
+Apply the summary() function to major_axis to see the results of the regression.
+The value you want for b is the slope of the estimate.
+
+```{r}
+summary(major_axis)
+```
+
+Apply the coef() function to major_axis. The output is a named numeric vector with two elements. The value you want is the second element. Store that value in the variable b.
+
+```{r}
+coef(major_axis)
+(b <- coef(major_axis)[2])
+```
+
+Use mutate and your scaled_mass function to calculate SMI and store the values in a new column called new_smi. You need to pass the mass column, the tarsus column, and b to your function.
+
+```{r}
+(feathers_mutated_2 <- feathers_mutated %>%
+  mutate(new_smi = scaled_mass(mass, tarsus, b)))
+```
+
+Use the select() function of dplyr to rearrange your columns so that smi and new_smi are side by side. Or, print them out together. Note: If your numbers are not correct, figure out where you made a mistake and correct it.
+
+```{r}
+(check_smi <- feathers_mutated_2 %>%
+  select(smi, new_smi) %>%
+  mutate(diff = smi - new_smi))
+filter(check_smi, diff <= 0.1 & diff >= 0.1)
+```
+
+*Summarize data*
+
+Group by site, and then use summarize() to calculate the mean and standard error of the mean (SEY) for basal_cort and stress_cort for each site. Use your std_err function to calculate standard error of the mean.
+
+```{r}
+feathers_summary <- feathers_mutated_2 %>%
+  group_by(site) %>%
+  summarise(mean_basal_cort = mean(basal_cort, na.rm = TRUE),
+            mean_stress_cort = mean(stress_cort, na.rm = TRUE),
+            se_basal_cort = std_err(basal_cort, na.rm = TRUE),
+            se_stress_cort = std_err(stress_cort, na.rm = TRUE))
+feathers_summary
+```
+
+*Graph data*
+
+**Plot 1**
+
+Make a boxplot of new_smi for each site. Do you see any clear differences among the four sites?
+
+```{r}
+feathers_mutated_2 %>%
+  ggplot() +
+  geom_boxplot(mapping = aes(x = site, y = new_smi)) +
+  labs(x = "Site", y = "Calculated SMI")
+```
+
+NIORT site has the longest range of SMI. VILLEFOLLET has its median significantly lower than the middle of the box, so it can be estimated that most of the observations in SMI are concentrated between 22.5 and 23.5. NIORT also has the largest interquartile range.
+
+**Plot 2**
+
+Make a plot of the basal corticosterone concentration (ng/ml) for each site. Use geom_point(). Add a geom_errorbar() layer. Use the ? function and the interwebs if you need, but here are a few hints:
+x should be the sites,
+geom_errorbar() needs ymin and ymax to draw the lower and upper ends of the error bars. Here, ymin should be one standard error below the mean and ymax should be one standard error above the mean. How could you do that? Good. Now do it.
 
 
 
 
 
 
+#################
+Below not sure wheather to use cortF or B
 
 
+###############
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```{r}
+ggplot(data = feathers_mutated_2) +
+  geom_point(x = sites, y = cortF)
+```
 
 
 
