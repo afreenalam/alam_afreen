@@ -39,7 +39,8 @@ Do not delete the minsub column like you did in the previous assignment.
 
 ```{r}
 darters_data <- read_csv(here("data", "darters.csv"))
-darters_data <- filter(darters_data, species != "tetrazonum" & species != "zonale")
+darters_data <- filter(darters_data, species != "tetrazonum" &
+                         species != "zonale")
 darters_data
 ```
 
@@ -76,6 +77,7 @@ Yes, all of the sums are equal to 1 for total_substrate.
 *Summarize data and Table results*
 
 Use group_by() and summarize() to summarize the mean length, depth, and velocity for each species for each riffle. Save this summary to a different object than the original data. You will need both in the following plot. Use facet_wrap on riffles like you did in the last assignment.
+Use kable to make a table with the summary means.
 
 ```{r}
 (darters_summary <- darters_wrangled %>%
@@ -100,9 +102,9 @@ darters_wrangled %>%
   filter(!is.na(length)) %>%
   ggplot(mapping = aes(x = species, y = length)) +
   stat_summary(
-    fun.ymin = min,
-    fun.ymax = max,
-    fun.y = median
+    fun.min = min,
+    fun.max = max,
+    fun = median
     ) +
   geom_point(data = darters_summary,
              mapping = aes(x = species,
@@ -112,10 +114,9 @@ darters_wrangled %>%
   facet_wrap(~ riffle) +
   coord_flip() +
   labs(y = "Length(in mm)", x = NULL)
-  
-   
-  
 ```
+
+Note- `fun.y` is deprecated used `fun` instead.`fun.ymin` is deprecated used `fun.min` instead.`fun.ymax` is deprecated. Used `fun.max` instead.
 
 The range of blennioides is largest in riffle 2 (among species) and smallest in riffle 1 (among other species). Range of spectabile and cearuleum is similar to each other (in their respective riffles). Mean of length is less than median in riffle 1 and greater than median in riffle 2. 
 
@@ -147,15 +148,7 @@ darters_wrangled %>%
   labs(y = "Length(in mm)", x = NULL)
 ```
 
-#####################
-Not sure if data used is correct, also have to describe plots. 
-Use of geom = "point"?
-Arguments in plot 1 stat_summary not sure?
-
-
-
-
-###############
+Mean of length is less than median in riffle 1 and greater than median in riffle 2. This graph shows the range and distribution of observations of length for each species in each riffle. 
 
 ***
 #### Stress and corticosterones in birds
@@ -178,6 +171,7 @@ Arguments in plot 1 stat_summary not sure?
          basal_cort = Bas_Cort,
          stress_cort = Stress_Cort))
 ```
+Data is tidy. 
 
 *Wrangle data*
 
@@ -229,6 +223,8 @@ Use the select() function of dplyr to rearrange your columns so that smi and new
   mutate(diff = smi - new_smi))
 filter(check_smi, diff <= 0.1 & diff >= 0.1)
 ```
+The difference of all rows is <= +/- 0.1.
+
 
 *Summarize data*
 
@@ -267,18 +263,9 @@ geom_errorbar() needs ymin and ymax to draw the lower and upper ends of the erro
 
 
 
-
-
-
-#################
-Below not sure wheather to use cortF or B
-
-
-###############
-
 ```{r}
 ggplot(data = feathers_mutated_2) +
-  geom_point(mapping = aes (x = site,
+  geom_point(mapping = aes(x = site,
                             y = basal_cort),
              na.rm = TRUE) +
   geom_errorbar(data = feathers_summary,
@@ -292,53 +279,57 @@ ggplot(data = feathers_mutated_2) +
   
 ```
 
-The graph shows the distribution of basal_cort for each site. It also shows the mean (green) for each site with its standard error (above and below the mean in red)
+The graph shows the distribution of basal_cort for each site. It also shows the mean (green) for each site with its standard error (above and below the mean in red) as error bars.
+NIORT has the greatest standard error of mean. Also, looking at the overlap of standard error bars one can say the NIORT population has higher average basal_cort than populations of CEBC and VILLEFOLLET. (Population not just sample).
+
+
+**Plot 3**
+
+Repeat the above plot but with two differences. Use the mean_stress and its standard error, and use geom_linerange() instead of geom_errorbar. Linerange and errorbar use the same arguments.
+
+```{r}
+ggplot(data = feathers_mutated_2) +
+  geom_point(mapping = aes(x = site,
+                            y = stress_cort),
+             na.rm = TRUE) +
+  geom_linerange(data = feathers_summary,
+                mapping = aes(x = site,
+                              ymin = mean_stress_cort - se_stress_cort,
+                              ymax = mean_stress_cort + se_stress_cort),
+                color = "red") +
+  geom_point(data = feathers_summary, mapping = aes(x = site,
+                                                    y = mean_stress_cort),
+             color = "green")
+  
+```
+
+The horizontal lines are removed. CEBC has largest mean. Also VILLEFOLLET has the most scattered data (largest standard error, longest red line). 
 
 
 
+*Graduate and Honors students*
+You must modify one of the above graphs with the following requirements:
+
+-use size of 3 for the point located at the mean,
+-color the point maroon,
+-place the error bars behind the points so that a black line does not cut across the face of each point.
+-Assume you like the Tie Fighter look but you do not want them so exaggerated. Size them to something much smaller but still present. The exact size depends on your tastes. Note: I encourage undergrads to attempt this but this does not count for or against your grade.
+
+```{r}
+ggplot(data = feathers_mutated_2) +
+  geom_point(mapping = aes(x = site,
+                            y = basal_cort),
+             na.rm = TRUE) +
+  geom_errorbar(data = feathers_summary,
+                mapping = aes(x = site,
+                              ymin = mean_basal_cort - se_basal_cort,
+                              ymax = mean_basal_cort + se_basal_cort),
+                width = 0.3) +
+  geom_point(data = feathers_summary, mapping = aes(x = site,
+                                                    y = mean_basal_cort),
+             color = "maroon", size = 3)
+```
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+***
+#### END
