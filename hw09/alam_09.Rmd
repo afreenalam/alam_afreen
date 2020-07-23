@@ -1,0 +1,146 @@
+---
+title: "HW 09: Data Wrangling Graphical Analysis"
+author: "Afreen Alam"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load libraries
+
+```{r}
+library(tidyverse)
+library(here)
+library(knitr)
+library(smatr)
+```
+
+Source your functions
+
+```{r}
+my_functions <- source(here("scripts", "my_functions.R"))
+```
+
+
+***
+### Darters in riffles
+
+*Import data*
+
+Read in darters.csv. These are the same data as an earlier assignment but in csv format.
+Use filter() to remove tetrazonum and zonale.
+Do not delete the minsub column like you did in the previous assignment.
+
+
+```{r}
+darters_data <- read_csv(here("data", "darters.csv"))
+darters_data <- filter(darters_data, species != "tetrazonum" & species != "zonale")
+darters_data
+```
+
+
+*Wrangle data*
+
+Use mutate() to perform these wrangling tasks
+Sum together the majsub and minsub into a new column called total_substrate. Does total_substrate sum to 1 for all observations?
+Change the riffle values of 1 and 2 to Riffle 1 and Riffle 2.
+Change the length data from centimeters to millimeters. It is more common to use mm for small fishes.
+Change the sex values of f and m to Female and Male.
+Only total_substrate needs a new column. The other changes should use their own columns.
+
+
+```{r}
+(darters_wrangled <- darters_data %>%
+  mutate(total_substrate = majsub + minsub,
+         riffle = ifelse(riffle == "1",
+                         "Riffle 1",
+                         "Riffle 2"),
+         length = length * 10,
+         sex = ifelse(sex == "f", "Female", "Male")
+         ))
+```
+
+Does total_substrate sum to 1 for all observations?
+
+```{r}
+darters_wrangled$total_substrate == 1
+```
+Yes, all of the sums are equal to 1 for total_substrate.
+
+
+*Summarize data and Table results*
+
+Use group_by() and summarize() to summarize the mean length, depth, and velocity for each species for each riffle. Save this summary to a different object than the original data. You will need both in the following plot. Use facet_wrap on riffles like you did in the last assignment.
+
+```{r}
+(darters_summary <- darters_wrangled %>%
+  group_by(riffle, species) %>%
+  summarise(length = mean(length, na.rm = TRUE),
+            depth = mean(depth, na.rm = TRUE),
+            velocity = mean(velocity, na.rm = TRUE)))
+kable(darters_summary)
+```
+
+
+*Graph data*
+
+**Plot 1**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
