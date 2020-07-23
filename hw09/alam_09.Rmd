@@ -91,6 +91,97 @@ kable(darters_summary)
 
 **Plot 1**
 
+Make a plot that uses the stat_summary() technique shown in R4ds section 3.7, reason 3 (scroll down, just before 3.7.1 Exercises) but use x = species and y = length.
+
+This will plot a point to show the median length, and draw a line from the shortest (min) to the longest (max) length to show the range of lengths for each species.
+
+```{r}
+darters_wrangled %>%
+  filter(!is.na(length)) %>%
+  ggplot(mapping = aes(x = species, y = length)) +
+  stat_summary(
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = median
+    ) +
+  geom_point(data = darters_summary,
+             mapping = aes(x = species,
+                           y = length),
+             shape = 15,
+             color = "red") +
+  facet_wrap(~ riffle) +
+  coord_flip() +
+  labs(y = "Length(in mm)", x = NULL)
+  
+   
+  
+```
+
+The range of blennioides is largest in riffle 2 (among species) and smallest in riffle 1 (among other species). Range of spectabile and cearuleum is similar to each other (in their respective riffles). Mean of length is less than median in riffle 1 and greater than median in riffle 2. 
+
+**Plot 2**
+
+Make a new plot with a geom_point() layer of the length variable for each species. Change the point color to a lighter shade in the range of gray50 to gray70. The points should contrast against the overall gray background but they are not the main visual focus of the graph.
+Add a stat_summary() layer with these arguments:
+fun.y = median
+geom = "point"
+size = 2.2
+Add another stat_summary(). Change the y function to mean, size to 3, and add the color = "maroon" argument.
+Facet, label, and flip the graph as you did above.
+
+```{r}
+darters_wrangled %>%
+  filter(!is.na(length)) %>%
+  ggplot(mapping = aes(x = species,
+                       y = length)) +
+  geom_point(color = "gray60") +
+  stat_summary(fun.y = median,
+               geom = "point",
+               size = 2.2) +
+  stat_summary(fun.y = mean,
+               geom = "point",
+               size = 3,
+               color = "maroon") +
+  facet_wrap(~ riffle) +
+  coord_flip() +
+  labs(y = "Length(in mm)", x = NULL)
+```
+
+#####################
+Not sure if data used is correct, also have to describe plots. 
+Use of geom = "point"?
+Arguments in plot 1 stat_summary not sure?
+
+
+
+
+###############
+
+***
+#### Stress and corticosterones in birds
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
