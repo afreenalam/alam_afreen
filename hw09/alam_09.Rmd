@@ -278,10 +278,21 @@ Below not sure wheather to use cortF or B
 
 ```{r}
 ggplot(data = feathers_mutated_2) +
-  geom_point(x = sites, y = cortF)
+  geom_point(mapping = aes (x = site,
+                            y = basal_cort),
+             na.rm = TRUE) +
+  geom_errorbar(data = feathers_summary,
+                mapping = aes(x = site,
+                              ymin = mean_basal_cort - se_basal_cort,
+                              ymax = mean_basal_cort + se_basal_cort),
+                color = "red") +
+  geom_point(data = feathers_summary, mapping = aes(x = site,
+                                                    y = mean_basal_cort),
+             color = "green")
+  
 ```
 
-
+The graph shows the distribution of basal_cort for each site. It also shows the mean (green) for each site with its standard error (above and below the mean in red)
 
 
 
