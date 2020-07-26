@@ -75,15 +75,58 @@ plot_box + plot_cleveland + coord_flip()
 ***
 #### Figure 3: outliers
 
+Write a single chunk of code that makes the six graphs shown in Figure 3 and lays them out as shown.
+
 ```{r}
 p_culmen <- sparrows %>%
   ggplot(aes(y = row_order)) +
-  peom_point(aes(x = culmen)) +
-  theme(axis.title)
+  geom_point(aes(x = culmen)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+p_nalospi <- sparrows %>%
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = nalospi)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+p_wt <- sparrows %>%
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = wt)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+p_wingcrd <- sparrows %>%
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = wingcrd)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+p_tarsus <- sparrows %>%
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = tarsus)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+p_head <- sparrows %>%
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = head)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+(p_culmen | p_nalospi | p_wt) /
+(p_wingcrd | p_tarsus | p_head)
+
 ```
 
-
-
+Question: Which three variables appear to have outlier data?
+The nalopsi, tarsus and head variable appear to have outliers.
 
 
 
