@@ -6,3 +6,99 @@ output: html_notebook
 editor_options: 
   chunk_output_type: inline
 ---
+
+***
+#### Load libraries
+
+```{r}
+library(tidyverse)
+library(here)
+library(GGally)
+library(patchwork)
+```
+
+
+***
+#### Import and wrangle
+
+```{r}
+sparrow_raw <- read_tsv(here("data", "sparrows.txt"))
+```
+
+Create two dummy variables.
+
+```{r}
+sparrows <- sparrow_raw %>%
+  mutate(box_group = "Sparrows",
+         row_order = 1:nrow(.))
+```
+
+
+***
+#### Figure 2: outliers
+
+Make boxplot similar to Figure 2.
+
+```{r}
+(plot_box <- sparrows %>%
+  ggplot(aes(x = box_group,
+             y = wingcrd)) +
+  geom_boxplot(width = 0.25) +
+  labs(x = NULL,
+       y = "Wing length (mm)"))
+```
+
+Assess full range of values can be assessed with a Cleveland dot plot.
+
+```{r}
+(plot_cleveland <- sparrows %>%
+  ggplot(aes(x = wingcrd,
+             y = row_order)) +
+  geom_point() +
+  labs(x = "Wing length (mm)",
+       y = "Order of the data"))
+```
+
+Recreate exact Figure 2 using patchwork.
+
+```{r}
+plot_box + plot_cleveland
+```
+
+Align "Wing length (mm)" on y axis.
+
+```{r}
+plot_box + plot_cleveland + coord_flip()
+```
+
+
+***
+#### Figure 3: outliers
+
+```{r}
+p_culmen <- sparrows %>%
+  ggplot(aes(y = row_order)) +
+  peom_point(aes(x = culmen)) +
+  theme(axis.title)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
