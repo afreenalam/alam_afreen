@@ -157,40 +157,40 @@ Outlier is suppose to be incorrectly recorded data. By definition it lies beyond
 aegla_box <- aegla_mutated %>%
   mutate(box_const = "boxplot")
 
-  ggplot(aegla_box,aes(x = box_const)) +
+  ggplot(aegla_box, aes(x = box_const)) +
   geom_boxplot(aes(y = Width))
 
-ggplot(aegla_box,aes(x = box_const)) +
+ggplot(aegla_box, aes(x = box_const)) +
   geom_boxplot(aes(y = Depth))
 
-ggplot(aegla_box,aes(x = box_const)) +
+ggplot(aegla_box, aes(x = box_const)) +
   geom_boxplot(aes(y = Flow))
 
-ggplot(aegla_box,aes(x = box_const)) +
+ggplot(aegla_box, aes(x = box_const)) +
   geom_boxplot(aes(y = pH))
 
-ggplot(aegla_box,aes(x = box_const)) +
+ggplot(aegla_box, aes(x = box_const)) +
   geom_boxplot(aes(y = TDS))
 
-ggplot(aegla_box,aes(x = box_const)) +
+ggplot(aegla_box, aes(x = box_const)) +
   geom_boxplot(aes(y = Cond))
 
-ggplot(aegla_box,aes(x = box_const)) +
+ggplot(aegla_box, aes(x = box_const)) +
   geom_boxplot(aes(y = N))
 
-ggplot(aegla_box,aes(x = box_const)) +
+ggplot(aegla_box, aes(x = box_const)) +
   geom_boxplot(aes(y = Ni))
 
-ggplot(aegla_box,aes(x = box_const)) +
+ggplot(aegla_box, aes(x = box_const)) +
   geom_boxplot(aes(y = Nt))
 
-ggplot(aegla_box,aes(x = box_const)) +
+ggplot(aegla_box, aes(x = box_const)) +
   geom_boxplot(aes(y = Phos))
 
-ggplot(aegla_box,aes(x = box_const)) +
+ggplot(aegla_box, aes(x = box_const)) +
   geom_boxplot(aes(y = Mg))
 
-ggplot(aegla_box,aes(x = box_const)) +
+ggplot(aegla_box, aes(x = box_const)) +
   geom_boxplot(aes(y = Ca))
 
 ```
