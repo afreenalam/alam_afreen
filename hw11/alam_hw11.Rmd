@@ -49,7 +49,7 @@ You must use the pipe (%>%) to write efficient code.
 
 *Graph Data*
 
-Explore the data. There are three apparent outliers among the variables but only one that I think is an actual outlier. Find them and justify your choices.
+**Explore the data. There are three apparent outliers among the variables but only one that I think is an actual outlier. Find them and justify your choices.***
 
 
 
@@ -146,7 +146,7 @@ p_width + p_depth + p_flow + p_ph + p_tds + p_cond + p_n + p_ni + p_nt + p_phos 
 The three apparent outliers are - Depth, pH and Phos. Though all three have a point that is clearly away from the other observations, data of Depth and pH is much more scattered and distance away from main data is less compared to Phos. All observations of Phos are less than 0.25 and the outlier is lies above 0.75. This difference is very vast hence Phos is the one with the actual outlier. 
 
 
-Choose four variables to make Cleveland plots, and make a 2x2 grid with the four plots, using patchwork.
+**Choose four variables to make Cleveland plots, and make a 2x2 grid with the four plots, using patchwork.**
 
 ```{r}
 p1 <- ggplot(aegla_mutated, aes(y = row_order)) +
@@ -177,7 +177,101 @@ From the plots one can deduce-
 - All except one phosphate concentration lie between 0.00 and 0.1875.
 
 
-Choose three different variables to make histograms. Play with the bins or binwidths argument that you think reveals the data well. Hint: the default bins = 30 that geom_histogram is usually not a suitable choice. Save each histogram to a unique variable.
+**Choose three different variables to make histograms. Play with the bins or binwidths argument that you think reveals the data well. Hint: the default bins = 30 that geom_histogram is usually not a suitable choice. Save each histogram to a unique variable.**
+
+```{r}
+(h_mg <- ggplot(aegla_mutated) +
+  geom_histogram(aes(x = Mg),
+                 binwidth = 0.1,
+                 boundary = 0,
+                 closed = "right",
+                 color = "black"))
+```
+The values appear to be in clusters and there are empty bins near tall bars. There are 10 bars between a unit. The tallest bar with 0.1 width is 3.51 to 3.60.
+
+```{r}
+(h_ca <- ggplot(aegla_mutated) +
+  geom_histogram(aes(x = Ca),
+                 binwidth = 0.1,
+                 boundary = 0,
+                 closed = "right",
+                 color = "black"))
+```
+
+Here the tallest bar is 0.00-0.10. The data does not follow a particular type of distribution. The rest of the bars are of random lengths (no gradual increase in length then gradual decrease).
+
+```{r}
+(h_width <- ggplot(aegla_mutated) +
+  geom_histogram(aes(x = Width),
+                 binwidth = 0.5,
+                 boundary = 0,
+                 closed = "right",
+                 color = "black"))
+```
+The tallest bar is 5.51 - 6.0 (can also be seen as densely packed in p_width). Here data seems to me scattered in the range 1 - 4.
+
+**Use the same three variables to produce density plots. Save each plot to a unique variable.**
+
+```{r}
+(d_mg <- ggplot(aegla_mutated) +
+  geom_density(aes(x = Mg)))
+
+(d_ca <- ggplot(aegla_mutated) +
+  geom_density(aes(x = Ca)))
+
+(d_width <- ggplot(aegla_mutated) +
+  geom_density(aes(x = Width)))
+```
+
+From the above plots it may be noted that the graph shows some value of density even though at an exact point there may not be any observations present. 
+
+In Mg the graph increases from 0.1 to 0.25 then decreases again to 0.1. It then seems to increase gradually then decrease suddenly. Overall, it seems to increase.
+
+In Ca the graph increases (very little) then gradually decreases (for a long range) the increases(very slowly) then decreases again. Overall, it seems to decrease.
+
+In Width the graph seems to have 2 peaks, the third is just sudden decrease in decrease of density.
+
+
+
+**Use `patchwork to produce a 2 column matrix with the histograms in the left column and the corresponding density plots in the right column.**
+
+```{r}
+(h_mg | d_mg) /
+(h_ca | d_ca) /
+(h_width | d_width) 
+  
+```
+
+The peaks in density plots correspond more to clusters of bars (of considerable length) and not always the height of the bars. This can be explained as height and size of bars were decided manually and the height changes based of binwidth decided. 
+
+
+**Use ggpairs to explore the relationships among all the variables.**
+
+```{r}
+aegla_mutated %>% ggscatmat(columns = 1:12)
+```
+
+
+
+### END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
