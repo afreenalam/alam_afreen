@@ -1,0 +1,164 @@
+---
+title: "HW 11: Data Visualization I"
+author: "Afreen Alam"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+***
+#### Load libraries
+
+```{r}
+library(tidyverse)
+library(here)
+library(GGally)
+library(patchwork)
+```
+
+
+***
+#### Habitat parameters for Aegla aegla_mutated
+
+
+*Import Data*
+
+```{r}
+aegla_data <- read_csv(here("data", "aegla_crabs.csv"))
+```
+
+
+*wrangle Data*
+
+Use select() to remove the Site, AT, WT, Crab, Shrimp, Aeglam, AeglaFe, AeglaFo columns.
+
+Use drop_na() to remove the one row with missing water quality data.
+
+Create a row_order dummy variable like we did for the aegla_mutated.
+
+You must use the pipe (%>%) to write efficient code.
+
+```{r}
+(aegla_mutated <- aegla_data %>%
+  select(!c(Site, AT, WT, Crab, Shrimp, Aeglam, AeglaFe, AeglaFo)) %>%
+  drop_na() %>%
+  mutate(row_order = 1:nrow(.)))
+```
+
+
+*Graph Data*
+
+Explore the data. There are three apparent outliers among the variables but only one that I think is an actual outlier. Find them and justify your choices.
+
+
+
+```{r}
+p_width <- aegla_mutated %>%
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Width)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+p_depth <- aegla_mutated %>%
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Depth)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+p_flow <- aegla_mutated %>%
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Flow)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+p_ph <- aegla_mutated %>%
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = pH)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+p_tds <- aegla_mutated %>%
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = TDS)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+p_cond <- aegla_mutated %>%
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Cond)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+p_n <- aegla_mutated %>%
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = N)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+p_ni <- aegla_mutated %>%
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Ni)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+
+p_nt <- aegla_mutated %>%
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Nt)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+p_phos <- aegla_mutated %>%
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Phos)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+p_mg <- aegla_mutated %>%
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Mg)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+p_ca <- aegla_mutated %>%
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Ca)) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+p_width + p_depth + p_flow + p_ph + p_tds + p_cond + p_n + p_ni + p_nt + p_phos + p_mg + p_ca + plot_layout(ncol = 3)
+
+```
+
+The three apparent outliers are - Depth, pH and Phos. Though all three have a point that is clearly away from the other observations, data of Depth and pH is much more scattered and distance away from main data is less compared to Phos. All observations of Phos are less than 0.25 and the outlier is lies above 0.75. This difference is very vast hence Phos is the one with the actual outlier. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
