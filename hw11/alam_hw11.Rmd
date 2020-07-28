@@ -146,11 +146,38 @@ p_width + p_depth + p_flow + p_ph + p_tds + p_cond + p_n + p_ni + p_nt + p_phos 
 The three apparent outliers are - Depth, pH and Phos. Though all three have a point that is clearly away from the other observations, data of Depth and pH is much more scattered and distance away from main data is less compared to Phos. All observations of Phos are less than 0.25 and the outlier is lies above 0.75. This difference is very vast hence Phos is the one with the actual outlier. 
 
 
+Choose four variables to make Cleveland plots, and make a 2x2 grid with the four plots, using patchwork.
+
+```{r}
+p1 <- ggplot(aegla_mutated, aes(y = row_order)) +
+  geom_point(aes(x = Flow)) +
+  labs(y = "Order of data in the dataset")
+
+p2 <- ggplot(aegla_mutated, aes(y = row_order)) +
+  geom_point(aes(x = pH)) +
+  labs(y = "Order of data in the dataset")
+
+p3 <- ggplot(aegla_mutated, aes(y = row_order)) +
+  geom_point(aes(x = Nt)) +
+  labs(x = "Nitrite concentrations",
+       y = "Order of data in the dataset")
+
+p4 <- ggplot(aegla_mutated, aes(y = row_order)) +
+  geom_point(aes(x = Phos)) +
+  labs(x = "Phosphate concentrations",
+       y = "Order of data in the dataset")
+
+p1 + p2 + p3 + p4 + plot_layout(ncol = 2)
+```
+
+From the plots one can deduce- 
+- Most of observations in flow lie between 0.3 and 0.5, further within that most lie on 0.4.
+- pH of observations is usually neutral, sometimes slightly basic and very rarely acidic.  
+- Most observations lie on two readings- 0.000 and 0.001. Most of the data collected is from places with no nitrite concentration.
+- All except one phosphate concentration lie between 0.00 and 0.1875.
 
 
-
-
-
+Choose three different variables to make histograms. Play with the bins or binwidths argument that you think reveals the data well. Hint: the default bins = 30 that geom_histogram is usually not a suitable choice. Save each histogram to a unique variable.
 
 
 
