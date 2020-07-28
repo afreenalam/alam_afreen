@@ -139,11 +139,82 @@ p_ca <- aegla_mutated %>%
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank())
 
-p_width + p_depth + p_flow + p_ph + p_tds + p_cond + p_n + p_ni + p_nt + p_phos + p_mg + p_ca + plot_layout(ncol = 3)
+p_width + p_depth + p_flow +
+  p_ph + p_tds + p_cond +
+  p_n + p_ni + p_nt +
+  p_phos + p_mg + p_ca +
+  plot_layout(ncol = 3)
 
 ```
 
-The three apparent outliers are - Depth, pH and Phos. Though all three have a point that is clearly away from the other observations, data of Depth and pH is much more scattered and distance away from main data is less compared to Phos. All observations of Phos are less than 0.25 and the outlier is lies above 0.75. This difference is very vast hence Phos is the one with the actual outlier. 
+The three apparent outliers are - Depth, pH and Phos. Though all three have a point that is clearly away from the other observations, data of Depth and pH is much more scattered and distance away from main data is less compared to Phos. All observations of Phos are less than 0.25 and the outlier lies above 0.75. This difference is very vast hence Phos is the one with the actual outlier. 
+
+*More on above statement*
+
+Outlier is suppose to be incorrectly recorded data. By definition it lies beyond 1.5 IQR. So lets make boxplots-
+
+```{r}
+aegla_box <- aegla_mutated %>%
+  mutate(box_const = "boxplot")
+
+  ggplot(aegla_box,aes(x = box_const)) +
+  geom_boxplot(aes(y = Width))
+
+ggplot(aegla_box,aes(x = box_const)) +
+  geom_boxplot(aes(y = Depth))
+
+ggplot(aegla_box,aes(x = box_const)) +
+  geom_boxplot(aes(y = Flow))
+
+ggplot(aegla_box,aes(x = box_const)) +
+  geom_boxplot(aes(y = pH))
+
+ggplot(aegla_box,aes(x = box_const)) +
+  geom_boxplot(aes(y = TDS))
+
+ggplot(aegla_box,aes(x = box_const)) +
+  geom_boxplot(aes(y = Cond))
+
+ggplot(aegla_box,aes(x = box_const)) +
+  geom_boxplot(aes(y = N))
+
+ggplot(aegla_box,aes(x = box_const)) +
+  geom_boxplot(aes(y = Ni))
+
+ggplot(aegla_box,aes(x = box_const)) +
+  geom_boxplot(aes(y = Nt))
+
+ggplot(aegla_box,aes(x = box_const)) +
+  geom_boxplot(aes(y = Phos))
+
+ggplot(aegla_box,aes(x = box_const)) +
+  geom_boxplot(aes(y = Mg))
+
+ggplot(aegla_box,aes(x = box_const)) +
+  geom_boxplot(aes(y = Ca))
+
+```
+
+TDS, Cond, Ni, Mg and Ca are the only ones that do not have an outlier by definition.
+
+
+```{r}
+p_width + p_depth + p_flow +
+  p_ph + p_n + p_nt +
+  p_phos
+  
+```
+
+Visually, in a data of 55 rows one cannot call 4-8 points an error under a variable. This especially applies for Flow and Nt.
+
+Under width, the point at 11.3 is separate from its next closest by 2 grid (unit in plot) units. This may be classified under outlier but would not change the data much.
+
+Under Depth and pH the majority of data is scattered in 5 grid lengths. The outlier in Depth has a distance of 5 grids from its closest neighbour. This does appear to be an outlier. In case of pH most of the data is concentrated on 7.0. Visually the the outlier at 6.0 stands out, only because there are not enough scatter below 7.0. This also appears to be an outlier.
+
+In Phos most of the data lies in 1 grid unit and the outlier is 6 grid units away from its closest neighbour. This is definitely an outlier.
+
+In N the scatter is is gradual and does not stand out, so not an outlier.
+
 
 
 **Choose four variables to make Cleveland plots, and make a 2x2 grid with the four plots, using patchwork.**
@@ -238,8 +309,7 @@ In Width the graph seems to have 2 peaks, the third is just sudden decrease in d
 ```{r}
 (h_mg | d_mg) /
 (h_ca | d_ca) /
-(h_width | d_width) 
-  
+(h_width | d_width)
 ```
 
 The peaks in density plots correspond more to clusters of bars (of considerable length) and not always the height of the bars. This can be explained as height and size of bars were decided manually and the height changes based of binwidth decided. 
@@ -251,35 +321,7 @@ The peaks in density plots correspond more to clusters of bars (of considerable 
 aegla_mutated %>% ggscatmat(columns = 1:12)
 ```
 
-
+Ca concentration and conductivity have a strong negative correlation (-0.73). Ca and TDS also have a strong negative correlation (-0.74).
+Mg has strong positive correlation with Cond and TDS (0.76 and 0.77 respectively). Ca and Mg have a correlation of (-0.69).
 
 ### END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
