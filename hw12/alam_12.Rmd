@@ -1,0 +1,189 @@
+---
+title: "HW 12: Dates"
+author: "Afreen Alam"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+***
+#### Load libraries
+
+```{r}
+library(tidyverse)
+library(here)
+library(lubridate)
+```
+
+Source functions
+
+```{r}
+my_functions <- source(here::here("scripts", "my_functions.R"))
+```
+
+
+***
+#### Part 1: Play date
+
+```{r}
+
+birth_date <- "7 Jan 2000"
+
+# Elizabeth Garret Anderson was the first female physician
+anderson <- "9 June 1836"
+
+# Mary Anning discovered the first complete Plesiosaur fossil, 
+# and other important Jurassic fossils
+anning <-  "1799/05/21"
+
+# Alice Augusta Ball was a chemist who developed the
+# first injectable treatment for leprosy.
+ball <- "July 24, 1892"
+
+# Sylvia Earle was the first chieft scientist at NOAA
+earle <- "August, 30 (1935)"
+
+# Rosalind Franklin used x-ray diffraction to 
+# discover DNA structure. Watson and Crick claimed credit.
+franklin <- "25th of July, 1920"
+
+# Ester Lederberg was the first to discover that viruses 
+# infect bacteria. Led to discovery of lambda bacteriophage
+lederberg <- "December 18, 1922"
+
+# Barbara McClintock discovered transposable elements (jumping genes),
+# and developed staining techniques to study chromosomes
+mcclintock <- "16061902"
+
+# Let's also remember a dream
+mlk_birth <- "1/15/29"
+mlk_dream <- "1963 August 28"
+```
+
+
+Answer these question. Insert code chunk with the answer after each question.
+
+
+1. Convert each date to POSIXct format, using lubridate functions, saving each to a unique variable. Print each result.
+
+2. Check yours dates to be sure they are correct. If you spot any errors, correct them now using the proper lubridate function(s).
+
+```{r}
+(birth_date_pox <- dmy(birth_date))
+
+(anderson_pox <- dmy(anderson))
+
+(anning_pox <-  ymd(anning))
+
+(ball_pox <- mdy(ball))
+
+(earle_pox <- mdy(earle))
+
+(franklin_pox <- dmy(franklin))
+
+(lederberg_pox <- mdy(lederberg))
+
+(mcclintock_pox <- dmy(mcclintock))
+
+
+mlk_birth_pox <- mdy(mlk_birth)
+year(mlk_birth_pox) <- 1929
+mlk_birth_pox
+
+(mlk_dream_pox <- ymd(mlk_dream))
+```
+
+
+3. What day of the week were you born on? Show the full day name, not the abbreviated name or the day number.
+
+```{r}
+wday(birth_date_pox, abbr = FALSE, label = TRUE)
+```
+
+
+4. What day of the week will your birthday be on this year? Use lubridate’s update function. You must figure out how to do it entirely by code for full points (no hard-coding). In other words, you code should work just as well next year or five years in the future, without editing.
+
+```{r}
+birth_date_pox %>%
+  update(year = year(today())) %>%
+  wday(abbr = FALSE, label = TRUE)
+```
+
+
+5. What day of the week would your birthday be on in the Year 2525, if Man is still alive? How old would you be? Here you may hard-code 2525. Show the abbreviated day of the week.
+
+```{r}
+birth_date_pox %>%
+  update(year = 2525) %>%
+  wday(label = TRUE)
+
+2525 - year(birth_date_pox)
+```
+
+
+6. How many days was it between the birth of Dr. Elizabeth Garrett Anderson and Alice Augusta Ball?
+
+```{r}
+ball_pox - anderson_pox
+```
+
+7. What is the duration between Martin Luther King Jr.’s birth date and his I Had a Dream speech.
+
+```{r}
+as.duration(mlk_dream_pox - mlk_birth_pox)
+# Above gives answer in seconds and approx. years
+
+# Below gives answer in days
+mlk_dream_pox - mlk_birth_pox
+```
+
+
+Enter the eight POSIXct compatible birth dates, including your own, into a vector in the order they are given above. Name each element of the vector with the last name of each person (review Assignment 2, part 2). You can but do not have to enter the date of the Dream speech.
+
+```{r}
+dates <- c(birth_date_pox, anderson_pox,
+           anning_pox, ball_pox,
+           earle_pox, franklin_pox,
+           lederberg_pox, mcclintock_pox,
+           mlk_birth_pox)
+name_vector <- c("Alam", "Anderson", "Anning", "Ball", "Earle", "Franklin", "Lederberg", "McClintock", "King")
+names(dates) <- name_vector
+```
+
+
+Of the eight birth dates from above, including your own, which of them are leap years? You must -
+- start with the POSIXct dates in your vector, and
+- display the final result as only the years of the leap years, not the date. You should end up with 3-4 years, depending on whether your birth year was a leap year. If your results show the full birth dates, then you need to apply one of the lubridate functions.
+
+```{r}
+year(dates[leap_year(dates)])
+```
+
+Subtract each birth date in the vector from your own to calculate the number of days that have passed between their birth dates and yours. Sort the results from greatest number of days to fewest. You should be listed last (or near the end) with a difference of 0 days.
+
+```{r}
+as_tibble(dates) %>%
+  mutate(difference = birth_date_pox - dates,
+         names = names(dates)) %>%
+  arrange(desc(difference))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
