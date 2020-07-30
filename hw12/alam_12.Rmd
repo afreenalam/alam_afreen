@@ -300,15 +300,68 @@ soil_sumry %>%
 #### Mississippi River Discharge
 
 
+Tidy the data. Use Year for the key and discharge for the value.
+
+I recommend dividing the discharge by 1000 to improve interpretation of the y-axis.
+
+Group by Year and Month.
 
 
+```{r}
+thebes_data <- read_csv(here::here("data", "thebes_discharge.csv")) %>%
+  pivot_longer(c(`1988`:`2018`), names_to = "Year", values_to = "discharge") %>%
+  mutate(discharge = discharge / 1000) %>%
+  group_by(Year, Month)
+```
+
+Summarize the mean discharge. If you end up with NA for Feb 2012, then you forgot to do something. Remember it and fix it.
+
+Add an Event column using mutate and case_when. If the year equals 1993 or 2011, then the value should be “Flood”. If the year equals 1988 or 2012, then the value should be “Drought”. Otherwise, the value should be “Normal”.
+
+```{r}
+(thebes_wrangled <- thebes_data %>%
+  summarise(mean_discharge = mean(discharge,
+                                  na.rm = TRUE)) %>%
+  mutate(Event = case_when(
+    Year == "1993" ~ "Flood",
+    Year == "2011" ~ "Flood",
+    Year == "1988" ~ "Drought",
+    Year == "2012" ~ "Drought",
+    TRUE ~ "Normal"
+  )))
+```
+
+**Make a second data set**
+
+```{r}
+(events <- thebes_wrangled %>%
+  filter(Event %in% c("Drought", "Flood")))
+```
+
+**Plot the data**
+
+Plot a line graph of the mean discharge by month.
+
+```{r}
+(thebes_plot <- thebes_wrangled %>%
+  mutate(Month = month(Month, label = TRUE)) %>% 
+  ggplot() +
+  geom_line(aes(x = Month,
+                y = mean_discharge, group = Year),
+            size = 0.3, color = "gray70") +
+  labs(y = "Discharge(cf/s, thousands)",
+  x = NULL) +
+   
+  geom_line(data = events, aes(x = Month,
+                y = mean_discharge,
+                group = Year,
+                color = Event),
+            size = 0.3)
+ )
+```
 
 
-
-
-
-
-
+########### END ##########
 
 
 
