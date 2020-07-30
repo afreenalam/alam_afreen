@@ -169,20 +169,99 @@ as_tibble(dates) %>%
   arrange(desc(difference))
 ```
 
+###################
+Vector???
+##################
+
+
+***
+#### Part 2: Wrangling and plotting with dates
+
+
+**Lake Ice**
+
+Import lake_ice.csv. The data use “-999” to indicate data that are NA. You must handle this as part of the import, not part of the wrangling.
+
+```{r}
+lake_ice_data <- read_csv(here::here("data", "lake_ice.csv"), na = "-999")
+```
+
+-Filter the data to save only Lake Mendota. Use the lake code DMR1 or the lake name LAKE MENDOTA. Case matters!
+
+-Select these six columns. You can do this in one of a few different ways but you should be able to do this very efficiently. Look back at Section 5.4 to review.
+iceon_year
+iceon_month
+iceon_day
+iceoff_year
+iceoff_month
+iceoff_day
+
+-Use lubridate functions to assemble the ice on year, month, and date into an ice_on date column. Use the same process to assemble the ice off information to make an ice_off date column.
+
+-Create a new duration column by subtracting ice_on from ice_off. Make a note of the unit of time for duration.
+
+Important: Subtracting the dates will result in a difftime object. Use as.numeric(ice_off - ice_on) to convert the result to a numeric object.
+
+```{r}
+(lake_mutated <- lake_ice_data %>%
+  filter(lakecode == "DMR1") %>%
+   select(iceon_year:iceoff_day) %>%
+   summarise(ice_on = make_date(iceon_year,
+                                iceon_month,
+                                iceon_day),
+             ice_off = make_date(iceoff_year,
+                                 iceoff_month,
+                                 iceoff_day)) %>%
+   mutate(duration = as.numeric(ice_off - ice_on)))
+```
+
+Make a line graph to show how duration changed over iceoff_year. Use na.rm = TRUE where needed to remove the warnings about plotting with NA values.
+
+Make appropriate labels for the X- and Y-axes. Remember to include the unit of measurement for ice duration.
+
+
+##################
+iceoff_year ???
+###############
 
 
 
+```{r}
+lake_mutated %>%
+  ggplot(aes(ice_off, duration)) +
+  geom_line(na.rm = TRUE) +
+  labs(x = "Year", y = "Ice Duration (days)")
+```
 
 
 
+#######
+
+iceoff_year version
+##########
+
+```{r}
+(lake_mutated <- lake_ice_data %>%
+  filter(lakecode == "DMR1") %>%
+   select(iceon_year:iceoff_day) %>%
+   mutate(ice_on = make_date(iceon_year,
+                                iceon_month,
+                                iceon_day),
+             ice_off = make_date(iceoff_year,
+                                 iceoff_month,
+                                 iceoff_day),
+          duration = as.numeric(ice_off - ice_on)))
+```
+
+```{r}
+lake_mutated %>%
+  ggplot(aes(iceoff_year, duration)) +
+  geom_line(na.rm = TRUE) +
+  labs(x = "Year", y = "Ice Duration (days)")
+```
 
 
-
-
-
-
-
-
+########## end of diff. version
 
 
 
