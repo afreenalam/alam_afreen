@@ -169,10 +169,6 @@ as_tibble(dates) %>%
   arrange(desc(difference))
 ```
 
-###################
-Vector???
-##################
-
 
 ***
 #### Part 2: Wrangling and plotting with dates
@@ -206,44 +202,6 @@ Important: Subtracting the dates will result in a difftime object. Use as.numeri
 (lake_mutated <- lake_ice_data %>%
   filter(lakecode == "DMR1") %>%
    select(iceon_year:iceoff_day) %>%
-   summarise(ice_on = make_date(iceon_year,
-                                iceon_month,
-                                iceon_day),
-             ice_off = make_date(iceoff_year,
-                                 iceoff_month,
-                                 iceoff_day)) %>%
-   mutate(duration = as.numeric(ice_off - ice_on)))
-```
-
-Make a line graph to show how duration changed over iceoff_year. Use na.rm = TRUE where needed to remove the warnings about plotting with NA values.
-
-Make appropriate labels for the X- and Y-axes. Remember to include the unit of measurement for ice duration.
-
-
-##################
-iceoff_year ???
-###############
-
-
-
-```{r}
-lake_mutated %>%
-  ggplot(aes(ice_off, duration)) +
-  geom_line(na.rm = TRUE) +
-  labs(x = "Year", y = "Ice Duration (days)")
-```
-
-
-
-#######
-
-iceoff_year version
-##########
-
-```{r}
-(lake_mutated <- lake_ice_data %>%
-  filter(lakecode == "DMR1") %>%
-   select(iceon_year:iceoff_day) %>%
    mutate(ice_on = make_date(iceon_year,
                                 iceon_month,
                                 iceon_day),
@@ -253,6 +211,11 @@ iceoff_year version
           duration = as.numeric(ice_off - ice_on)))
 ```
 
+
+Make a line graph to show how duration changed over iceoff_year. Use na.rm = TRUE where needed to remove the warnings about plotting with NA values.
+
+Make appropriate labels for the X- and Y-axes. Remember to include the unit of measurement for ice duration.
+
 ```{r}
 lake_mutated %>%
   ggplot(aes(iceoff_year, duration)) +
@@ -261,7 +224,114 @@ lake_mutated %>%
 ```
 
 
-########## end of diff. version
+***
+#### Soil Carbon Dioxide
+
+Import the soil_co2.txt dataset.
+
+```{r}
+soil_co2_data <- read_tsv(here::here("data","soil_co2.txt"))
+```
+
+Establish a POSIXct-compatible date variable for 01 January 2006.
+
+```{r}
+co2_date <- dmy("01 January 2006")
+```
+
+Rename the columns so that they are syntactic.
+
+```{r}
+colnames(soil_co2_data) <- c("day_n", "datecode", "min", "veg", "plot", "group", "corr_co2", "soil_t")
+```
+
+Make a Date column that adds the day of CO2 measurement to the 01 Jan 2006 reference date. Make sure lubridate is loaded.
+
+Create a Year column that extracts just the year from your new Date column.
+
+Create a Month column that extracts just the month from your new Date column. The month should be the three-letter text form (e.g., “Jan”).
+
+Group your data by Year and Month.
+
+```{r}
+(soil_mutated <- soil_co2_data %>%
+  mutate(Date = co2_date + day_n,
+         Year = year(Date),
+         Month = month(Date, label = TRUE)) %>%
+  group_by(Year, Month))
+```
+
+Summarize mean CO2 and standard error of the mean. You had to calculate standard error for a previous assignment so you can review your previous code.
+
+```{r}
+(soil_sumry <- soil_mutated %>%
+  summarise(mean_co2 = mean(corr_co2,
+                            na.rm = TRUE),
+            se_co2 = std_err(corr_co2,
+                             na.rm = TRUE)))
+```
+
+Make a column chart of mean CO2 for each month. Use either geom_errorbar or geom_linerange to plot the standard error of the mean. Use your std_err function in the scripts folder to calculate the standard error. Use facet_wrap on Year to make plots the results by year. If you use geom_errorbar, then use the width argument to make reasonable horizontal lines.
+
+```{r}
+soil_sumry %>%
+  ggplot(aes(Month, mean_co2)) +
+  geom_col() +
+  geom_errorbar(aes(ymin = mean_co2 - se_co2,
+                ymax = mean_co2 + se_co2), width = 0.35) +
+  facet_wrap(~ Year)
+  
+```
+
+Make the same plot but use points instead of columns, and use only geom_linerange.
+
+```{r}
+soil_sumry %>%
+  ggplot(aes(Month, mean_co2)) +
+  geom_point() +
+  geom_linerange(aes(ymin = mean_co2 - se_co2,
+                ymax = mean_co2 + se_co2)) +
+  facet_wrap(~ Year)
+  
+```
+
+
+***
+#### Mississippi River Discharge
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
