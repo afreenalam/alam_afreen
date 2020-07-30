@@ -33,7 +33,7 @@ birth_date <- "7 Jan 2000"
 # Elizabeth Garret Anderson was the first female physician
 anderson <- "9 June 1836"
 
-# Mary Anning discovered the first complete Plesiosaur fossil, 
+# Mary Anning discovered the first complete Plesiosaur fossil,
 # and other important Jurassic fossils
 anning <-  "1799/05/21"
 
@@ -44,11 +44,11 @@ ball <- "July 24, 1892"
 # Sylvia Earle was the first chieft scientist at NOAA
 earle <- "August, 30 (1935)"
 
-# Rosalind Franklin used x-ray diffraction to 
+# Rosalind Franklin used x-ray diffraction to
 # discover DNA structure. Watson and Crick claimed credit.
 franklin <- "25th of July, 1920"
 
-# Ester Lederberg was the first to discover that viruses 
+# Ester Lederberg was the first to discover that viruses
 # infect bacteria. Led to discovery of lambda bacteriophage
 lederberg <- "December 18, 1922"
 
@@ -147,7 +147,9 @@ dates <- c(birth_date_pox, anderson_pox,
            earle_pox, franklin_pox,
            lederberg_pox, mcclintock_pox,
            mlk_birth_pox)
-name_vector <- c("Alam", "Anderson", "Anning", "Ball", "Earle", "Franklin", "Lederberg", "McClintock", "King")
+name_vector <- c("Alam", "Anderson", "Anning",
+                 "Ball", "Earle", "Franklin",
+                 "Lederberg", "McClintock", "King")
 names(dates) <- name_vector
 ```
 
@@ -230,7 +232,7 @@ lake_mutated %>%
 Import the soil_co2.txt dataset.
 
 ```{r}
-soil_co2_data <- read_tsv(here::here("data","soil_co2.txt"))
+soil_co2_data <- read_tsv(here::here("data", "soil_co2.txt"))
 ```
 
 Establish a POSIXct-compatible date variable for 01 January 2006.
@@ -242,7 +244,9 @@ co2_date <- dmy("01 January 2006")
 Rename the columns so that they are syntactic.
 
 ```{r}
-colnames(soil_co2_data) <- c("day_n", "datecode", "min", "veg", "plot", "group", "corr_co2", "soil_t")
+colnames(soil_co2_data) <- c("day_n", "datecode", "min",
+                             "veg", "plot", "group",
+                             "corr_co2", "soil_t")
 ```
 
 Make a Date column that adds the day of CO2 measurement to the 01 Jan 2006 reference date. Make sure lubridate is loaded.
@@ -308,10 +312,12 @@ Group by Year and Month.
 
 
 ```{r}
-thebes_data <- read_csv(here::here("data", "thebes_discharge.csv")) %>%
-  pivot_longer(c(`1988`:`2018`), names_to = "Year", values_to = "discharge") %>%
+(thebes_data <- read_csv(here::here("data", "thebes_discharge.csv")) %>%
+  pivot_longer(c(`1988`:`2018`),
+               names_to = "Year",
+               values_to = "discharge") %>%
   mutate(discharge = discharge / 1000) %>%
-  group_by(Year, Month)
+  group_by(Year, Month))
 ```
 
 Summarize the mean discharge. If you end up with NA for Feb 2012, then you forgot to do something. Remember it and fix it.
@@ -344,15 +350,15 @@ Plot a line graph of the mean discharge by month.
 
 ```{r}
 (thebes_plot <- thebes_wrangled %>%
-  mutate(Month = month(Month, label = TRUE)) %>% 
+  mutate(Month = month(Month, label = TRUE)) %>%
   ggplot() +
   geom_line(aes(x = Month,
                 y = mean_discharge, group = Year),
             size = 0.3, color = "gray70") +
   labs(y = "Discharge(cf/s, thousands)",
-  x = NULL) +
-   
-  geom_line(data = events, aes(x = Month,
+       x = NULL) +
+  geom_line(data = events,
+            aes(x = Month,
                 y = mean_discharge,
                 group = Year,
                 color = Event),
@@ -362,30 +368,4 @@ Plot a line graph of the mean discharge by month.
 
 
 ########### END ##########
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
