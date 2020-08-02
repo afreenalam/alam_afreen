@@ -208,19 +208,46 @@ Filter out rows where Flower number is not NA.
 
 ```{r}
 (flower_size_wrangled <- flower_size_data %>%
-   filter(is.na("Flower number"))
+   filter(!is.na(`Flower number`)) %>%
+   select(species = Species,
+          cor_length = `Corolla length (cm)`,
+          throat_width = `Corolla width throat (cm)`) %>%
+   separate(species, into = c("genus", "species"), extra = "drop") %>%
+   group_by(genus, species) %>%
+   summarise(mean_length = mean(cor_length, na.rm = TRUE),
+             max_length = max(cor_length),
+             mean_width = mean(throat_width, na.rm = TRUE),
+             max_width = max(throat_width))
  )
 
 ```
 
 
+**Import and wrangle the second data set.**
+
+```{r}
+pollinators_raw <- read_csv(here("data", "flower_pollinators.csv"))
+```
+
+```{r}
+(pollinators <- pollinators_raw %>%
+   select(-c(starts_with("Source"), Color)) %>%
+   filter(!is.na(Pollinator)) %>%
+   separate(Species, into = c("genus", "species"), extra = "drop") %>%
+   separate(Pollinator, into = "Syndrome", extra = "drop", sep = "(,| )")
+   )
+```
 
 
+**Join the datasets**
 
+```{r}
+(phlox <-  flower_size_wrangled%>%
+   inner_join(pollinators)
+   )
+```
 
-
-
-
+**Plotting**
 
 
 
