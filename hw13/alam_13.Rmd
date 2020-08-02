@@ -62,6 +62,63 @@ Convert it to upper case with str_to_upper().
 str_length(beta_data_final)
 ```
 
+**Sequence analysis: find the promoter region**
+
+Use str_count() and regex to count the number of IUPAC letters in the sequence that are not A, C, G, or T.
+(Ans - None)
+
+```{r}
+str_count(beta_data_final, "[^ATCG]")
+```
+
+Count how many possible start codons are in the sequence.
+
+```{r}
+str_count(beta_data_final, "ATG")
+```
+Count how many possible stop codons are located in the sequence. For full credit, I’ll be more impressed if you search for both stop codons with a single regular expression. Hint: |
+
+```{r}
+str_count(beta_data_final, "(TGA|TAA)")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
