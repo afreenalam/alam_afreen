@@ -149,19 +149,54 @@ str_length(promotor)
 ***
 #### Part 2: Ants
 
+**Import the data**
+
+```{r}
+ants_data <- read_csv(here("data", "ants.csv"))
+head(ants_data)
+```
+
+
+**Wrangle the data**
+
+```{r}
+(ants_data_wrangled <- ants_data %>%
+   pivot_longer(names_to = "species",
+                values_to = "abundance",
+                matches("[A-Z].+\\.[a-z]+",
+                        ignore.case = FALSE)) %>%
+   select(-c(season:sample)) %>%
+   mutate(species = str_replace(species,
+                                "(.{4}).*\\.(.{4}).*", "\\1\\2"),
+          year = factor(year,
+                        ordered = TRUE,
+                        levels = c(2010, 2011))) %>%
+   group_by(year, species) %>%
+   summarise(total_abundance = sum(abundance))
+   )
+```
+
+**Plot the data**
+
+Use the aes aesthetic in ggplot for mapping. Use x = reorder(species, total) to sort the species order from most to least abundant. total should be on the Y-axis.
 
 
 
+```{r}
+ggplot(ants_data_wrangled,
+       aes(x = reorder(species,total_abundance),
+           y = total_abundance),
+       group = species) +
+  geom_line(color = "gray30") +
+  geom_point(aes(shape = year),
+             size = 2) +
+  coord_flip() +
+  labs(x = NULL, y = "Total Abundance", shape = "Year") +
+theme_minimal()  
+```
 
-
-
-
-
-
-
-
-
-
+***
+#### Part 3: Featuring Phlox Flowers
 
 
 
