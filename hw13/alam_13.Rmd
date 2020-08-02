@@ -204,7 +204,7 @@ theme_minimal()
 flower_size_data <- read_csv(here("data", "flower_size.csv"))
 ```
 
-Filter out rows where Flower number is not NA.
+
 
 ```{r}
 (flower_size_wrangled <- flower_size_data %>%
@@ -215,9 +215,9 @@ Filter out rows where Flower number is not NA.
    separate(species, into = c("genus", "species"), extra = "drop") %>%
    group_by(genus, species) %>%
    summarise(mean_length = mean(cor_length, na.rm = TRUE),
-             max_length = max(cor_length),
+             max_length = max(cor_length, na.rm = TRUE),
              mean_width = mean(throat_width, na.rm = TRUE),
-             max_width = max(throat_width))
+             max_width = max(throat_width, na.rm = TRUE))
  )
 
 ```
@@ -242,12 +242,102 @@ pollinators_raw <- read_csv(here("data", "flower_pollinators.csv"))
 **Join the datasets**
 
 ```{r}
-(phlox <-  flower_size_wrangled%>%
+(phlox <- flower_size_wrangled %>%
    inner_join(pollinators)
    )
 ```
 
 **Plotting**
+
+Make a scatterplot to show the relationship between mean_length (x-axis) and mean_width (y-axis). Color the points by Syndrome.
+
+```{r}
+phlox %>%
+  ggplot(aes(mean_length, mean_width, color = Syndrome)) +
+  geom_point() +
+  labs(x = "Mean length", y = "Mean width")
+```
+
+Use mutate with str_replace() and regex patterns to replace all occurences of “beetle” with “beetles,” and “bee” with “bees”. Be careful. If you don’t do this right, then you could end up with “beetless”. Make use of the $ match character.
+
+```{r}
+phlox %>%
+  mutate(Syndrome = str_replace(Syndrome, "(^be.*e$)", "\\1s")) %>%
+  ggplot(aes(mean_length, mean_width, color = Syndrome)) +
+  geom_point() +
+  labs(x = "Mean length", y = "Mean width")
+```
+
+Once again, use mutate() with str_replace and a regex pattern to replace all instances of “beetles” or “flies” with “other insects”.
+
+```{r}
+phlox %>%
+  mutate(Syndrome = str_replace(Syndrome, "(^be.*e$)", "\\1s"),
+         Syndrome = str_replace(Syndrome, ".+l.?es", "other insects")) %>%
+  ggplot(aes(mean_length, mean_width, color = Syndrome)) +
+  geom_point() +
+  labs(x = "Mean length", y = "Mean width")
+```
+
+Use mutate and case_when to create a new column called syndrome_group and to change autogamous to Autogamous (upper case A), bat to Mammal, hummingbird to Bird, and everything else to Insect. Creating a new column would allow you to access the individual syndromes for future plots, when necessary.
+
+```{r}
+(phlox_categorised <- phlox %>%
+  mutate(Syndrome = str_replace(Syndrome, "(^be.*e$)", "\\1s"),
+         Syndrome = str_replace(Syndrome, ".+l.?es", "other insects"),
+         syndrome_group = case_when(
+           Syndrome == "autogamous" ~ "Autogamous",
+          Syndrome == "bat" ~ "Mammal",
+          Syndrome == "hummingbird" ~ "Bird",
+          TRUE ~ "Insect"
+           
+         )))
+  
+  
+phlox_categorised %>%
+  ggplot(aes(mean_length, mean_width, color = syndrome_group)) +
+  geom_point() +
+  labs(x = "Mean length", y = "Mean width", color = "Syndrome")
+```
+
+
+**Highlighting groups with gghighlight**
+
+Change the above plot so that it highlights both the mammal and bird syndrome groups. 
+
+```{r}
+phlox_categorised %>%
+  ggplot(aes(mean_length, mean_width, color = syndrome_group)) +
+  geom_point() +
+  labs(x = "Mean length", y = "Mean width", color = "Syndrome") +
+  gghighlight(syndrome_group == "Mammal" | syndrome_group == "Bird",
+              use_direct_label = FALSE)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
