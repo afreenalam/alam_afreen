@@ -82,12 +82,72 @@ Count how many possible stop codons are located in the sequence. For full credit
 str_count(beta_data_final, "(TGA|TAA)")
 ```
 
+Assign the two motif sequences to variables caat_box and tata_box, respectively.
+
+Count how many times each of these motifs occurs in the DNA sequence.
+
+```{r}
+caat_box <- "CCAAT"
+tata_box <- "CTATAA"
 
 
+# Number of caat_box
+str_count(beta_data_final, caat_box)
+
+# Number of tata_box
+str_count(beta_data_final, tata_box)
+```
+
+Make a regex search string called caat_seq that begins with “CCAAT”, ends with “ATG”", and allows for a stretch of 100-150 nucleotides between the two. Hint: Remember {start, stop}.
+Count how many times this possible sequence occurs.
+
+```{r}
+caat_seq <- "CCAAT.{100,150}ATG"
+str_count(beta_data_final, caat_seq)
+```
+
+Make a regex search string called tata_seq that begins with “CTATAA”, ends with “ATG”, and allows for a stretch of 50-100 nucleotides between the two. Think about this carefully.
+
+Count how many times this possible sequence occurs.
+
+```{r}
+tata_seq <- "CTATAA.{50,100}ATG"
+str_count(beta_data_final, tata_seq)
+```
+
+Use str_extract_all to extract all of the caat_seq sequences and save them in a variable called caat_seqs_all. Use the simplify = TRUE argument in your function call (?str_extract_all for help).
+
+```{r}
+(caat_seqs_all <- beta_data_final %>%
+   str_extract_all(caat_seq,
+                   simplify = TRUE)
+   )
+```
+
+How long is each extracted sequence? Make a mental note of the length of each one. You should have two sequences that differ in length by nine nucleotides.
+
+```{r}
+str_length(caat_seqs_all)
+```
+Use str_which() to find which caat_seq has the tata_box sequence. Use that value to extract the full promotor sequence into a variable called promotor.
+Print promotor and determine it’s length
+
+```{r}
+# Position of which caat_seq has the tata_box sequence
+
+str_which(caat_seqs_all, tata_box)
+
+# Using position to extract sequence
+(promotor <- caat_seqs_all[str_which(caat_seqs_all,
+                                     tata_box)])
+
+# Determine length
+str_length(promotor)
+```
 
 
-
-
+***
+#### Part 2: Ants
 
 
 
