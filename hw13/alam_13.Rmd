@@ -19,3 +19,75 @@ library(gghighlight)
 
 ***
 #### Part 1: DNA strings
+
+**Import the data**
+
+```{r}
+beta_gliadin_raw <- read_lines(here("data", "beta_gliadin.txt"), skip = 1)
+head(beta_gliadin_data)
+```
+
+
+**From many strings to one**
+
+
+Replace all of the whitespace with nothing.
+
+Replace all of the digits with nothing.
+
+```{r}
+(beta_data <- beta_gliadin_raw %>%
+  str_replace_all(c(" " = "", "\\d" = "", "\\t" = "")))
+```
+
+Use str_c to collapse the strings. Print the variable to ensure you have just one string. Here are the first 100 characters.
+
+```{r}
+(beta_data_c <- beta_data %>%
+   str_c(collapse = "")
+   )
+```
+
+Convert it to upper case with str_to_upper().
+
+```{r}
+(beta_data_final <- beta_data_c %>%
+   str_to_upper()
+   )
+```
+
+ How long is the total DNA sequence? You should get 3310 characters.
+ 
+```{r}
+str_length(beta_data_final)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
