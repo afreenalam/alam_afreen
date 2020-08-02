@@ -1,0 +1,21 @@
+---
+title: "HW 13: Strings and things"
+author: "Afreen Alam"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+***
+#### Load libraries
+
+```{r}
+library(tidyverse)
+library(here)
+library(ggthemes)
+library(gghighlight)
+```
+
+***
+#### Part 1: DNA strings
