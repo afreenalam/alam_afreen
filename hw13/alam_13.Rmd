@@ -198,9 +198,20 @@ theme_minimal()
 ***
 #### Part 3: Featuring Phlox Flowers
 
+**Import and wrangle the first data set**
 
+```{r}
+flower_size_data <- read_csv(here("data", "flower_size.csv"))
+```
 
+Filter out rows where Flower number is not NA.
 
+```{r}
+(flower_size_wrangled <- flower_size_data %>%
+   filter(is.na("Flower number"))
+ )
+
+```
 
 
 
