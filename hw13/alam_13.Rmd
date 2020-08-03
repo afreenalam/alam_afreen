@@ -24,7 +24,7 @@ library(gghighlight)
 
 ```{r}
 beta_gliadin_raw <- read_lines(here("data", "beta_gliadin.txt"), skip = 1)
-head(beta_gliadin_data)
+head(beta_gliadin_raw)
 ```
 
 
