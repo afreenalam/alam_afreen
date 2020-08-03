@@ -184,7 +184,7 @@ Use the aes aesthetic in ggplot for mapping. Use x = reorder(species, total) to 
 
 ```{r}
 ggplot(ants_data_wrangled,
-       aes(x = reorder(species,total_abundance),
+       aes(x = reorder(species, total_abundance),
            y = total_abundance),
        group = species) +
   geom_line(color = "gray30") +
@@ -192,7 +192,7 @@ ggplot(ants_data_wrangled,
              size = 2) +
   coord_flip() +
   labs(x = NULL, y = "Total Abundance", shape = "Year") +
-theme_minimal()  
+theme_minimal()
 ```
 
 ***
@@ -290,10 +290,8 @@ Use mutate and case_when to create a new column called syndrome_group and to cha
           Syndrome == "bat" ~ "Mammal",
           Syndrome == "hummingbird" ~ "Bird",
           TRUE ~ "Insect"
-           
          )))
-  
-  
+
 phlox_categorised %>%
   ggplot(aes(mean_length, mean_width, color = syndrome_group)) +
   geom_point() +
@@ -315,59 +313,92 @@ phlox_categorised %>%
 ```
 
 
+**Other improvements: colors and themes**
+
+
+***
+#### Part 4: Customize your plots
+
+Make four scatterplots of max width as a function of max length. Try different themes and palettes. Each plot should use a different combination of theme and color palettes.
+
+```{r}
+phlox_categorised %>%
+  ggplot() +
+  geom_point(aes(x = max_length,
+                 y = max_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group),
+             size = 2) +
+  labs(shape = "Syndrome",
+       fill = "Syndrome",
+       x = "Max Length (cm)",
+       y = "Max Width (cm)") +
+  theme_tufte() +
+  scale_shape_manual(values = c(22:25)) +
+  scale_fill_brewer(palette = "Dark2") +
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12))
+```
 
 
 
+```{r}
+phlox_categorised %>%
+  ggplot() +
+  geom_point(aes(x = max_length,
+                 y = max_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group),
+             size = 2) +
+  labs(shape = "Syndrome",
+       fill = "Syndrome",
+       x = "Max Length (cm)",
+       y = "Max Width (cm)") +
+  theme_classic() +
+  scale_shape_manual(values = c(22:25)) +
+  scale_fill_brewer(palette = "Set1") +
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12))
+```
 
 
+```{r}
+phlox_categorised %>%
+  ggplot() +
+  geom_point(aes(x = max_length,
+                 y = max_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group),
+             size = 2) +
+  labs(shape = "Syndrome",
+       fill = "Syndrome",
+       x = "Max Length (cm)",
+       y = "Max Width (cm)") +
+  theme_bw() +
+  scale_shape_manual(values = c(22:25)) +
+  scale_fill_viridis_d(option = "viridis") +
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12))
+```
 
 
+```{r}
+phlox_categorised %>%
+  ggplot() +
+  geom_point(aes(x = max_length,
+                 y = max_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group),
+             size = 2) +
+  labs(shape = "Syndrome",
+       fill = "Syndrome",
+       x = "Max Length (cm)",
+       y = "Max Width (cm)") +
+  theme_base() +
+  scale_shape_manual(values = c(22:25)) +
+  scale_fill_viridis_d(option = "magma") +
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12))
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#### END ####
