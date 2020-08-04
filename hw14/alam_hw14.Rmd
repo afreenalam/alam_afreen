@@ -42,7 +42,7 @@ us_missouri <- map_data(map = "state",
                         region = "missouri")
 
 # Outline of Alabama, Florida, Mississippi, and North Carolina
-us_other <- subset(x = usa, 
+us_other <- subset(x = usa,
                    subset = region %in% c("alabama",
                                           "florida",
                                           "mississippi",
@@ -65,11 +65,11 @@ ggplot() +
 Add Missouri, filled with black to emphasize it over the other four states.
 
 ```{r}
-ggplot() + 
-  geom_polygon(data = us_other, 
-               aes(x = long, 
-                   y = lat, 
-                   group = group), 
+ggplot() +
+  geom_polygon(data = us_other,
+               aes(x = long,
+                   y = lat,
+                   group = group),
                fill = "gray") +
   geom_polygon(data = us_missouri,
                aes(x = long,
@@ -81,16 +81,16 @@ ggplot() +
 Add outline of 48 states.
 
 ```{r}
-ggplot() + 
-  geom_polygon(data = us_other, 
-               aes(x = long, 
-                   y = lat, 
-                   group = group), 
-               fill = "gray") +
-  geom_polygon(data = us_missouri, 
+ggplot() +
+  geom_polygon(data = us_other,
                aes(x = long,
-                   y = lat, 
-                   group = group), 
+                   y = lat,
+                   group = group),
+               fill = "gray") +
+  geom_polygon(data = us_missouri,
+               aes(x = long,
+                   y = lat,
+                   group = group),
                fill = "black") +
   geom_polygon(data = usa,
                aes(x = long,
@@ -103,16 +103,16 @@ ggplot() +
 Replace the default theme with theme_map(). Fix the longitude 1.3 times longer than the latitude. Add the filled states first so that the black outlines of all states are overlaid on top. Name it us_map.
 
 ```{r}
-us_map <- ggplot() + 
-  geom_polygon(data = us_other, 
-               aes(x = long, 
-                   y = lat, 
-                   group = group), 
-               fill = "gray") +
-  geom_polygon(data = us_missouri, 
+us_map <- ggplot() +
+  geom_polygon(data = us_other,
                aes(x = long,
-                   y = lat, 
-                   group = group), 
+                   y = lat,
+                   group = group),
+               fill = "gray") +
+  geom_polygon(data = us_missouri,
+               aes(x = long,
+                   y = lat,
+                   group = group),
                fill = "black") +
   geom_polygon(data = usa,
                aes(x = long,
@@ -181,11 +181,11 @@ us <- map_data(map = "state")
 state_birth <- subset(x = us,
                       region %in% c("missouri"))
 
-(usa_map <- ggplot() + 
-  geom_polygon(data = state_birth, 
+(usa_map <- ggplot() +
+  geom_polygon(data = state_birth,
                aes(x = long,
-                   y = lat, 
-                   group = group), 
+                   y = lat,
+                   group = group),
                fill = "black") +
   geom_polygon(data = us,
                aes(x = long,
@@ -231,7 +231,7 @@ mo_other <- subset(missouri,
 Them together
 ```{r}
 usa_map + st_map +
-  plot_layout(ncol = 2, widths = c(1.5,1))
+  plot_layout(ncol = 2, widths = c(1.5, 1))
 ```
 
 
@@ -275,7 +275,7 @@ skin_cancer <- skin_cancer_raw %>%
 ```{r}
 mean_mort <- mean(skin_cancer$Mort)
 
-skin_cancer_adj <- skin_cancer %>% 
+skin_cancer_adj <- skin_cancer %>%
   mutate(relative_mort = Mort - mean_mort)
 ```
  
@@ -458,11 +458,11 @@ I filtered the data to restrict the distribution to the longitude and latitude v
 
 bigfoot <- read_csv(here::here("data", "bigfoot.csv"))
 
-bigfoot <- bigfoot %>% 
+bigfoot <- bigfoot %>%
   filter(long >= min_long & long <= max_long,
-         lat >= min_lat & lat <= max_lat) %>% 
-  sample_n(300) %>% 
-  mutate(name = "Gigantopithecus") %>% 
+         lat >= min_lat & lat <= max_lat) %>%
+  sample_n(300) %>%
+  mutate(name = "Gigantopithecus") %>%
   dplyr::select(name, long, lat)
 ```
 
@@ -487,15 +487,17 @@ tail(both_species)
 Use Stamen Maps and zoom to make plot.
 
 ```{r}
-base = get_stamenmap(bbox = c(min_long, 
-                              min_lat, 
-                              max_long, 
+base <-  get_stamenmap(bbox = c(min_long,
+                              min_lat,
+                              max_long,
                               max_lat),
                      zoom = 4,
                      maptype = "terrain-background")
 
 ggmap(base)
 ```
+
+Used "<-" in place of "=".
 
 The first layer to add is the Bigfoot data.
 
@@ -540,11 +542,11 @@ set.seed(1993420)
 
 bigfoot_new <- read_csv(here::here("data", "bigfoot.csv"))
 
-bigfoot_new <- bigfoot_new %>% 
+bigfoot_new <- bigfoot_new %>%
   filter(long >= min_long & long <= max_long,
-         lat >= min_lat & lat <= max_lat) %>% 
-  sample_n(300) %>% 
-  mutate(name = "Gigantopithecus") %>% 
+         lat >= min_lat & lat <= max_lat) %>%
+  sample_n(300) %>%
+  mutate(name = "Gigantopithecus") %>%
   dplyr::select(name, long, lat)
 
 both_species_new <- bind_rows(bigfoot_new, bears)
@@ -561,45 +563,195 @@ base + geom_point(data = both_species_new,
        fill = "Species",
        shape = "Species")
 ```
-In the above code chunk a new data frame was made for bigfoot after changing "set.seed". The "bind.row" used old bears data (from the example) and new bigfoot data to create new final data frame which was plotted.
+In the above code chunk a new data frame was made for bigfoot after changing "set.seed". The "bind.row" used old bears data (from the example) and new bigfoot data to create new final data frame which was plotted. I reused the global variables.
 
 
 ***
 #### Part 4: Bathymetry
 
 
+**Example: Fiji earthquakes**
+
+The bathymetric data has depth in feet but the quakes data has depths in kilometers, so convert quake depth to feet.
+
+```{r}
+min_long <- -170
+max_long <- 164
+min_lat  <- -42
+max_lat  <- -8
+
+# This converts depth in km to depth in feet.
+# Necessary because bathymetry data will be in feet
+earthquakes <- quakes %>%
+   mutate(depth = depth * 3280.84)
+```
+
+```{r}
+# Will auto read the saved file if present.
+
+fiji <- getNOAA.bathy(lon1 = min_long,
+                      lon2 = max_long,
+                      lat1 = min_lat,
+                      lat2 = max_lat,
+                      antimeridian = TRUE,
+                      keep = TRUE)
+```
+
+The marmap package includes an autoplot.bathy() function to automatically plot bathymetric data with ggplot2, using reasonable default settings. The geom = c("raster", "contour") tells ggplot to use geom_raster and geom_contour. The size = 0.1 argument specifies the thickness of the contour lines. 
+
+```{r}
+# Could also just use autoplot() without the .bathy extension.
+autoplot.bathy(fiji,
+         geom = c("raster", "contour"),
+         size = 0.1,
+         na.rm = TRUE)
+```
+
+Tweak the plot.
+
+```{r}
+# Using autoplot, which "knows" to use autoplot.bathy
+autoplot(fiji,
+         geom = c("raster", "contour"),
+         size = 0.1,
+         na.rm = TRUE) +
+  scale_fill_gradient2(low = "dodgerblue4",
+                       mid = "gainsboro",
+                       high = "darkgreen",
+                       name = "Depth (ft)") +
+  labs(x = "Longitude",
+       y = "Latitude") +
+  theme(axis.title.y = element_text(angle = 0,
+                                    vjust = 0.5))
+```
+
+Save above plot as base_map, and add the geom_point layer.
+
+```{r}
+base_map <- autoplot(fiji,
+                     geom = c("raster",
+                              "contour"),
+                     size = 0.1,
+                     na.rm = TRUE) +
+  scale_fill_gradient2(low = "dodgerblue4",
+                       mid = "gainsboro",
+                       high = "darkgreen",
+                       name = "Depth (ft)") +
+  labs(x = "Longitude",
+       y = "Latitude") +
+  theme(axis.title.y = element_text(angle = 0,
+                                    vjust = 0.5))
+```
+
+```{r}
+base_map +
+  geom_point(data = earthquakes,
+             aes(x = long,
+                 y = lat))
+```
+
+Make the points more transparent and their size based on "mag".
+
+```{r}
+base_map +
+  geom_point(data = earthquakes,
+             aes(x = long,
+                 y = lat,
+                 size = mag),
+             alpha = 0.4)
+```
+
+Use the scale_size_continuous layer to set the minimum and maximum point sizes used for magnitude. Add the name argument to name this legend.
+```{r}
+base_map +
+  geom_point(data = earthquakes,
+             aes(x = long,
+                 y = lat,
+                 size = mag),
+             alpha = 0.4) +
+  scale_size_continuous(range = c(0.5, 3),
+                        name = "Magnitude")
+```
+
+***
+#### Bathymetry: now you try it
+
+Set global varieties
+
+```{r}
+min_long <- -90
+max_long <- -58
+min_lat <- 8
+max_lat <- 28
+```
+
+Load blennies.csv into a blennies object. Use getNOAA.bathy() function like we did in the Fiji earthquakes example to get the bathymetric data for the Caribbean Sea.
+
+Set antimeridian to FALSE.
+
+Set keep = TRUE to that the data are saved after the first run.
+
+Save the results to a carib_sea object.
+
+```{r}
+blennies <- read_csv(here::here("data", "blennies.csv"))
+
+carib_sea <- getNOAA.bathy(lon1 = min_long,
+              lon2 = max_long,
+              lat1 = min_lat,
+              lat2 = max_lat,
+              antimeridian = FALSE,
+              keep = TRUE)
+```
+
+Use autoplot to plot the base bathymetric map. Add a labs() layer to label the x- and y- axes as “Longitude” and “Latitude”, respectively. Replace the scale_fill_gradient2 layer with this layer "scale_fill_etopo(guide = FALSE)".
+Once you are happy with the results, save the base map to a base_map object.
+
+```{r}
+(base_map <- autoplot(carib_sea,
+         geom = c("raster", "contour"),
+         size = 0.1,
+         na.rm = TRUE) +
+  scale_fill_etopo(guide = FALSE) +
+  labs(x = "Longitude",
+       y = "Latitude") +
+  theme(axis.title.y = element_text(angle = 0,
+                                    vjust = 0.5)))
+```
+
+*Add the blennies*
+
+Map shape to name in the aesthetics layer.
+
+Use fillable shapes 21-23.
+
+Specify a color for the fill. I used white. You can use other colors but be sure the colors contrast well with the background.
+
+Increase the point size a bit. Try a range between 2-4. You can use decimal point sizes, like 2.8 or 3.1. Find a value that you think helps the points to stand out without overwhelming the plot.
+
+Note: for the best sense of the final point size, click on the small “Show in New Window” button just above the top right of the plot in your notebook. The points tend to look a little large in the small plots in your notebook.
+
+Change the legend name to “Species”.
+
+Add theme(legend.position = "bottom") to put the legend below the map.
+
+Figure out how to add a theme element to italicize the species names in the legend.
 
 
+```{r}
+base_map +
+  geom_point(data = blennies,
+             mapping = aes(x = long,
+                           y = lat,
+                           shape = name),
+             size = 3,
+             fill = "white") +
+  scale_shape_manual(values = c(21:23),
+                     name = "Species") +
+  theme(legend.position = "bottom",
+        legend.text = element_text(face = "italic"),
+        axis.title.y = element_text(angle = 90))
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#### END ####
 
