@@ -7,15 +7,6 @@ editor_options:
   chunk_output_type: inline
 ---
 
-
-
-
-###############
-Change the Knit directory to “Project Directory”???
-#############
-
-
-
 ***
 #### Load libraries
 
@@ -145,13 +136,13 @@ mo_scott <- subset(missouri,
                    subregion %in% c("scott"))
 
 mo_map <- ggplot() +
-  geom_polygon( data = missouri,
+  geom_polygon(data = missouri,
                 aes(x = long,
                     y = lat,
                     group = group),
                 fill = NA,
                 color = "black") +
-  geom_polygon( data = mo_scott,
+  geom_polygon(data = mo_scott,
                 aes(x = long,
                     y = lat,
                     group = group),
@@ -162,7 +153,7 @@ mo_map <- ggplot() +
 mo_map
 ```
 
-Put both maps in one row and make us map 1.5 times wider that missouri.
+Put both maps in one row and make us_map 1.5 times wider that mo_map.
 
 ```{r}
 us_map + mo_map +
@@ -173,6 +164,278 @@ us_map + mo_map +
 
 **Outline maps: your turn**
 
+The U.S. map should highlight in black the state of your birth.
+
+The state map should highlight in black the county of your birth.
+
+The state map should also show in gray two additional counties, chosen based on the initials of your first, middle and last names,
+
+
+*I was not born in US. I chose Missouri as the state of birth and Cape Girardeau as county of birth.*
+
+Note- Variables are made again for practice. Could have used the ones coded for before.
+
+US map
+```{r}
+us <- map_data(map = "state")
+state_birth <- subset(x = us,
+                      region %in% c("missouri"))
+
+(usa_map <- ggplot() + 
+  geom_polygon(data = state_birth, 
+               aes(x = long,
+                   y = lat, 
+                   group = group), 
+               fill = "black") +
+  geom_polygon(data = us,
+               aes(x = long,
+                   y = lat,
+                   group = group),
+               fill = NA,
+               color = "black") +
+  theme_map() +
+  coord_fixed(1.3))
+```
+
+State map
+
+```{r}
+state <- map_data("county", "missouri")
+mo_birth <- subset(missouri,
+                   subregion %in% c("cape girardeau"))
+mo_other <- subset(missouri,
+                   subregion %in% c("adair", "andrew"))
+
+(st_map <- ggplot() +
+  geom_polygon(data = mo_other,
+                aes(x = long,
+                    y = lat,
+                    group = group),
+                fill = "gray") +
+  geom_polygon(data = mo_birth,
+                aes(x = long,
+                    y = lat,
+                    group = group),
+                fill = "black") +
+    geom_polygon(data = state,
+                aes(x = long,
+                    y = lat,
+                    group = group),
+                fill = NA,
+                color = "black") +
+  theme_map() +
+  coord_fixed(1.3))
+```
+
+
+Them together
+```{r}
+usa_map + st_map +
+  plot_layout(ncol = 2, widths = c(1.5,1))
+```
+
+
+***
+#### Part 2: Choropleth maps
+
+**Example: Skin cancer mortality in the U.S.**
+
+Import data.
+
+```{r}
+skin_cancer_raw <-
+  read_delim(file = here::here("data", "skin_cancer.txt"),
+             delim = " ",
+             skip = 7,
+             trim_ws = TRUE)
+```
+
+Next, we have to do some data wrangling to add spaces to the two-word state names. We also have to correct a typo on the data (MewYork). The state names have to be corrected because they have to match the state names as spelled in the fips data we imported above.
+
+```{r}
+skin_cancer <- skin_cancer_raw %>%
+  filter(State != "Wash,D.C.") %>%
+  mutate(State = case_when(
+    State == "NorthCarolina" ~ "North Carolina",
+    State == "SouthCarolina" ~ "South Carolina",
+    State == "NorthDakota" ~ "North Dakota",
+    State == "SouthDakota" ~ "South Dakota",
+    State == "NewHampshire" ~ "New Hampshire",
+    State == "NewJersey" ~ "New Jersey",
+    State == "NewMexico" ~ "New Mexico",
+    State == "MewYork" ~ "New York",
+    State == "RhodeIsland" ~ "Rhode Island",
+    State == "WestVirginia" ~ "West Virginia",
+    TRUE ~ State
+  ))
+```
+
+ First, we calculate mean_mort, which is the average mortality for all 48 states. We then use mutate() to add a relative_mort column, substracting the Mort column from the mean_mort average. We’re saving this adjusted data in a new tibble called skin_cancer_adj.
+ 
+```{r}
+mean_mort <- mean(skin_cancer$Mort)
+
+skin_cancer_adj <- skin_cancer %>% 
+  mutate(relative_mort = Mort - mean_mort)
+```
+ 
+We’ll use the vector as a filter to remove Alaska, Hawaii, the District of Columbia, and U.S. territories from our shapefile.
+
+```{r}
+# Used to trim Alaska, Hawaii, and territories from the shapefile.
+lower_48 <- c("Alabama", "Arizona",
+              "Arkansas", "California",
+              "Colorado", "Connecticut",
+              "Delaware", "Florida",
+              "Georgia", "Idaho",
+              "Illinois", "Indiana",
+              "Iowa", "Kansas",
+              "Kentucky", "Louisiana",
+              "Maine", "Maryland",
+              "Massachusetts", "Michigan",
+              "Minnesota", "Mississippi",
+              "Missouri", "Montana",
+              "Nebraska", "Nevada",
+              "New Hampshire", "New Jersey",
+              "New Mexico", "New York",
+              "North Carolina", "North Dakota",
+              "Ohio", "Oklahoma",
+              "Oregon", "Pennsylvania",
+              "Rhode Island", "South Carolina",
+              "South Dakota", "Tennessee",
+              "Texas", "Utah", "Vermont",
+              "Virginia", "Washington",
+              "West Virginia",
+              "Wisconsin", "Wyoming")
+```
+
+Next, we use the st_read function from the sf package to read the shape file.
+
+```{r}
+states <- st_read(here::here("data",
+                             "cb_2017_us_state_500k.shp"),
+                  stringsAsFactors = TRUE)
+```
+Filter keeps only states in the states object that listed in the lower_48 vector.
+
+```{r}
+states_df <- states %>%
+  dplyr::filter(NAME %in% lower_48)
+```
+
+The states_df tibble has a column called STATEFP with the state FIPS already factored.
+
+```{r}
+str(states_df$STATEFP)
+```
+
+The levels() function returns the levels associated with a factored variable. We’ll capture those levels, which we then use to factor the FIPS in the imported data.
+
+```{r}
+# Capture the FIPS levels from states_df
+# Use to factor the FIPS and state names in the next step.
+state_levels <- levels(states_df$STATEFP)
+name_levels <- levels(states_df$NAME)
+```
+
+Now we import the state FIPS, remove an unneeded column, rename the FIPS column to STATEFP, then use mutate() to change the STATEFP column to an unordered factor.
+
+```{r}
+fips <- read_csv(here::here("data", "state_fips.csv")) %>%
+  select(-abbr) %>%
+  rename(STATEFP = FIPS) %>%
+  mutate(STATEFP = factor(STATEFP,
+                          levels = state_levels))
+```
+
+Next, we use two left_join() calls to merge the data into a single file. The first left join matches the state names and adds the state FIPS column (STATEFP) to our adjusted skin cancer data. That STATEFP column then matches the STATEFP column in the states_df tibble. We now have all of the data in a single tibble.
+
+```{r}
+skin_cancer_adj <- left_join(skin_cancer_adj, fips)
+
+states_df <- left_join(states_df, skin_cancer_adj)
+```
+
+Plot the graph.
+
+```{r}
+ggplot(states_df) +
+  geom_sf(aes(fill = relative_mort)) +
+  scale_fill_viridis_c(name = "Skin Cancer,\nRelative Mortality",
+                       option = "inferno") +
+  coord_sf(crs = st_crs(5070)) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+**Choropleth map: your turn**
+
+Import the csv data. The spreadsheet uses - for missing data, which you’ll have to convert to NA during import. You may have to do one or two other things during import, too. Inspect your data!
+
+```{r}
+lyme_data <- read_csv(here::here("data",
+                                 "lyme_disease.csv"),
+                      skip = 1,
+                      na = "-")
+head(lyme_data)
+```
+
+Create a new column called 2017 that adds together 2017_Confirmed and 2017_Probable.
+
+Remove the 2017_Confirmed and 2017_Probable columns. Once added together, you don’t need them and they’ll get in the way of the next step.
+
+The data are not tidy so you will need to pivot_longer to put the years into a single column. Use appropriate names for names_to and values_to arguments.
+
+group_by state and use summarize() to calculate mean number of each cases, and then convert the mean to the log (base 10) using the log10() function. This converts the values to a reasonable scale for display.
+
+```{r}
+(lyme_data_wrangled <- lyme_data %>%
+   mutate(`2017` = `2017_Confirmed` + `2017_Probable`) %>%
+   select(-c(`2017_Confirmed`,
+             `2017_Probable`)) %>%
+   pivot_longer(c(`2007`:`2017`),
+                names_to = "year",
+                values_to = "cases") %>%
+   group_by(State) %>%
+   summarise(log_mean_cases = log10(mean(cases,
+                               na.rm = TRUE)))
+   )
+```
+
+Use left_join as you did above to merge the fips data frame to your lyme disease data. Use left_join again to merge your lyme data to the states_df data.
+
+```{r}
+lyme_data_wrangled <- left_join(lyme_data_wrangled, fips)
+
+states_df_2 <- left_join(states_df, lyme_data_wrangled)
+```
+
+Plot your choropleth map using the same ggplot code for the cancer map but
+
+Change aes(file = ...) for geom_sf to the column with the log of your mean lyme cases.
+
+Change the name of the scale to something appropriate. You can play with other viridis palatte options or even try other continuous scales if you want.
+
+For the scale_fill_viris_c() layer, I suggest adding labels = c("<1", "10", "100", "1000", "5000") as an argument. This makes it easier to match the colors to actual values rather than the log values.
+
+```{r}
+ggplot(states_df_2) +
+  geom_sf(aes(fill = log_mean_cases)) +
+  scale_fill_viridis_c(name = "Lyme Disease,\nMean Cases",
+                       option = "viridis",
+                       labels = c("<1", "10", "100", "1000", "5000")) +
+  coord_sf(crs = st_crs(5070)) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+Highest number of cases are in northeastern states. 
+
+
+***
+#### Part 3: Dot distribution maps
+
+**Example: Distribution of *Gigantopithecus* and *Ursus***
 
 
 
