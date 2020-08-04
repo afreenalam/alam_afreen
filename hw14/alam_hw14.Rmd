@@ -438,6 +438,143 @@ Highest number of cases are in northeastern states.
 **Example: Distribution of *Gigantopithecus* and *Ursus***
 
 
+```{r}
+# Global vars -------------------------------------------------------------
+
+# Restrict the map to the western US.
+min_long <- -126
+max_long <- -104
+min_lat  <-   31
+max_lat  <-   50
+
+set.seed(9618973)
+```
+
+Load the Bigfoot data. The Bigfoot data has the longitude and latitude for “observations” across North America. The data set is large so I used the sample() function to “randomly” sample 300 records. 
+I filtered the data to restrict the distribution to the longitude and latitude variables defined above. I sampled 300 records, changed the name to the non-scientific genus Gigantopithecus, and then selected only the name, longitude and latitude columns. The sample function is affected by setseed.
+
+```{r}
+# Bigfoot data ------------------------------------------------------------
+
+bigfoot <- read_csv(here::here("data", "bigfoot.csv"))
+
+bigfoot <- bigfoot %>% 
+  filter(long >= min_long & long <= max_long,
+         lat >= min_lat & lat <= max_lat) %>% 
+  sample_n(300) %>% 
+  mutate(name = "Gigantopithecus") %>% 
+  dplyr::select(name, long, lat)
+```
+
+Import bears data.
+
+```{r}
+# Bear data ---------------------------------------------------------------
+
+bears <- read_csv(here::here("data", "bears.csv"))
+
+both_species <- bind_rows(bigfoot, bears)
+
+```
+
+View head and tail to see bind_row results.
+
+```{r}
+head(both_species)
+tail(both_species)
+```
+
+Use Stamen Maps and zoom to make plot.
+
+```{r}
+base = get_stamenmap(bbox = c(min_long, 
+                              min_lat, 
+                              max_long, 
+                              max_lat),
+                     zoom = 4,
+                     maptype = "terrain-background")
+
+ggmap(base)
+```
+
+The first layer to add is the Bigfoot data.
+
+```{r}
+base <- ggmap(base)
+
+base + geom_point(data = bigfoot,
+                  aes(x = long,
+                      y = lat))
+```
+
+Where are black bears?
+
+```{r}
+base + geom_point(data = bears,
+                  aes(x = long,
+                      y = lat))
+```
+
+The final plot that includes both species.
+
+```{r}
+base + geom_point(data = both_species,
+                  aes(x = long,
+                      y = lat,
+                      shape = name,
+                      fill = name),
+                  size = 2) +
+  scale_shape_manual(values = c(22:23)) +
+  labs(x = "Longitude",
+       y = "Latitude",
+       fill = "Species",
+       shape = "Species")
+```
+
+**Distribution map: your turn**
+
+Recreate the Bigfoot and Black Bear distribution map but change the setseed number to your last seven digits of your S0 number.
+
+```{r}
+set.seed(1993420)
+
+bigfoot_new <- read_csv(here::here("data", "bigfoot.csv"))
+
+bigfoot_new <- bigfoot_new %>% 
+  filter(long >= min_long & long <= max_long,
+         lat >= min_lat & lat <= max_lat) %>% 
+  sample_n(300) %>% 
+  mutate(name = "Gigantopithecus") %>% 
+  dplyr::select(name, long, lat)
+
+both_species_new <- bind_rows(bigfoot_new, bears)
+
+base + geom_point(data = both_species_new,
+                  aes(x = long,
+                      y = lat,
+                      shape = name,
+                      fill = name),
+                  size = 2) +
+  scale_shape_manual(values = c(22:23)) +
+  labs(x = "Longitude",
+       y = "Latitude",
+       fill = "Species",
+       shape = "Species")
+```
+In the above code chunk a new data frame was made for bigfoot after changing "set.seed". The "bind.row" used old bears data (from the example) and new bigfoot data to create new final data frame which was plotted.
+
+
+***
+#### Part 4: Bathymetry
+
+
+
+
+
+
+
+
+
 
 
 
