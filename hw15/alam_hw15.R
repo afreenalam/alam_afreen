@@ -97,9 +97,10 @@ covid_deaths <- covid_deaths_raw %>%
 
 
 
-county_polulation_raw <- read_csv(here("data",
+county_population_raw <- read_csv(here("data",
                                        "covid_county_population_usafacts.csv"))
-
+state_population <- county_population_raw %>%
+  filter(countyFIPS != 0)
 
 
 semo_county_raw <- read_csv(here("data",
@@ -215,10 +216,58 @@ plot_2_final <- plot_2_data %>%
 
 ## Plot 3: Cleveland plot comparing number of cases in April and July
 
-
-
-
-
-
-
-
+plot_3_final <- covid_confirmed %>%
+    filter(date %in% c(ymd("2020-04-01"):ymd("2020-04-30"),
+                       ymd("2020-07-01"):ymd("2020-07-30"))) %>%
+    mutate(month = month(date)) %>%
+    group_by(State,`County Name`, month) %>%
+    summarise(total_cases_county = sum(cases,
+                                       na.rm = TRUE)) %>%
+    left_join(state_population) %>%
+    mutate(rate_county = (total_cases_county / population)
+           * 100000)
+  
+a <- plot_3_final %>%
+  group_by(State, month) %>%
+  summarise(avg_rate = sum(total_cases_county) / sum(population) * 100000)
+    
+    
+    group_by(State,`County Name`, month) %>%
+    
+    
+    
+    
+    summarise(pop_state = sum(population,
+                              na.rm = TRUE),
+              cases_per_state = sum(cases,
+                                    na.rm = TRUE),
+              rate = (cases_per_state / pop_state)
+              * 100000)
+  
+  
+ggplot(plot_3_final,
+       aes(x = reorder(State, rate),
+           y = rate),
+       group = State) +
+  geom_line(color = "gray30") +
+  geom_point(aes(color = month),
+             size = 2) +
+  coord_flip()
+  
+  
+    group_by(`State`, `County Name`, month) %>%
+    summarise(case_total = sum(cases,na.rm = TRUE),
+           case_rate_county = (case_total / population) * 100000)
+   
+  
+  
+  
+  
+  
+   group_by(`State`, month) %>%
+    summarise(total_confirmed = sum(cases,
+                                    na.rm = TRUE),
+              case_rate = (total_confirmed / population) * 100000)
+    
+    
+  
