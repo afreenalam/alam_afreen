@@ -232,6 +232,19 @@ a <- plot_3_final %>%
   summarise(avg_rate = sum(total_cases_county) / sum(population) * 100000)
     
     
+ggplot(a,
+       aes(x = reorder(State, avg_rate),
+           y = avg_rate),
+       group = State) +
+  geom_line(color = "gray30") +
+  geom_point(aes(color = month),
+             size = 2) +
+  coord_flip()
+
+
+
+
+
     group_by(State,`County Name`, month) %>%
     
     
