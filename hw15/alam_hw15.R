@@ -67,6 +67,34 @@ west_fips <-  c(4, 8, 16, 35,
 
 ### Write a function ..............
 
+### Write an R function that calculates the number
+### of daily new cases from a vector of daily total cases.
+
+new_from_total <- function(args) {
+  length_args <- length(args) # Number of input values
+  # Vector with first value as 0 and all except last input value
+  with_first_value <- c(0, args[1:length_args - 1])
+  # Input value subtracted with previous value
+  diff <- args - with_first_value
+  return(diff) # Returns difference as result
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Initial import and wrangling --------------------------------------------
@@ -283,4 +311,129 @@ ggplot(plot_3_final,
               case_rate = (total_confirmed / population) * 100000)
     
     
+ 
+# ??????????????????
+   
+
+# Plot 4 ------------------------------------------------------------------
+
+## Plot 4: Missouri COVID cases, highlighting when state opened.
+   
+   
+plot_4_data <- covid_confirmed %>%
+     filter(State == "MO",
+            date >= dmy(first_mo_case)) %>%
+     group_by(date) %>%
+     summarise(total_cases = sum(cases)) %>%
+     mutate(daily = new_from_total(total_cases))
+   
+### frollmean calculates a 7-day rolling average of daily new cases.
+plot_4_data$roll_mean <- 
+  data.table::frollmean(plot_4_data$daily,
+                        7, align = "right") %>%
+  replace_na(0)            
+   
+### Graph data
+   
+plot_4_data %>%
+  ggplot(aes(x = date, y = daily)) +
+  geom_col(color = "gray85",
+           fill = "grey70") +
+  scale_x_date(date_labels = "%b %d",
+               date_breaks = "2 weeks") +
+  theme_classic() +
+  geom_col(data = filter(plot_4_data,
+                         date == dmy("16 June 2020")),
+           mapping = aes(x = date, y = daily),
+           color = "gray85",
+           fill = "#C8102E") +
+  geom_line(aes(x = date, y = roll_mean),
+            color = "#9D2235",
+            size = 0.6) +
+  annotate("text", x = mdy("Jun 01 2020"), y = 450,
+           label = "Missouri reopened\n       16 June 2020",
+           color = "#C8102E") +
+  labs(x = NULL,
+       y = "Daily New Cases")
   
+
+
+
+
+
+#### The line does not show up when using highlight.
+plot_4_data %>%
+  ggplot(aes(x = date, y = daily)) +
+  geom_col(color = "gray85",
+           fill = "#C8102E") +
+  scale_x_date(date_labels = "%b %d",
+               date_breaks = "2 weeks") +
+  theme_classic() +
+  gghighlight(date == dmy("16 June 2020"),
+              unhighlighted_params = list(color = "gray85",
+                                          fill = "grey70")) +
+
+
+
+geom_line(aes(x = date, y = roll_mean),
+            color = "#9D2235",
+            size = 0.6, alpha = 1) +
+  annotate("text", x = mdy("Jun 01 2020"), y = 450,
+           label = "Missouri reopened\n       16 June 2020",
+           color = "#C8102E") +
+  labs(x = NULL,
+       y = "Daily New Cases")
+  
+
+
+
+
+# Plot 5 ------------------------------------------------------------------
+
+## Plot 5: Table and choropleth map
+  
+  
+  
+ 
+
+   
+  
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+    
