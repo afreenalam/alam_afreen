@@ -313,9 +313,197 @@ ggplot(plot_3_final,
                                     na.rm = TRUE),
               case_rate = (total_confirmed / population) * 100000)
     
-    
+
+   
+   
+   
+### Attempt 2
+  
  
 # ??????????????????
+   
+   
+plot_3_1 <- covid_confirmed %>%
+  filter(date %in% c(ymd("2020-04-01"), ymd("2020-07-01"))) %>%
+  rename(cases_first = cases,
+         date_first = date) %>% 
+group_by(State, date_first) %>%
+  summarise(cases_first = sum(cases_first))
+
+plot_3_1a <- plot_3_1 %>% 
+  filter(date_first == ymd("2020-04-01"))
+plot_3_1b <- plot_3_1 %>% 
+  filter(date_first == ymd("2020-07-01"))
+
+
+plot_3_last <- covid_confirmed %>%
+  filter(date %in% c(ymd("2020-04-30"), ymd("2020-07-30"))) %>% 
+  rename(cases_last = cases,
+         date_last = date) %>% 
+  group_by(State, date_last) %>%
+  summarise(cases_last = sum(cases_last))
+
+plot_3_last_a <- plot_3_last %>% 
+  filter(date_last == ymd("2020-04-30"))
+plot_3_last_b <- plot_3_last %>% 
+  filter(date_last == ymd("2020-07-30"))
+
+
+plot_3_bottom <- left_join(plot_3_1b, plot_3_last_b) %>%
+  mutate(new_cases = cases_last - cases_first) %>%
+  arrange(desc(new_cases))
+plot_3_top <- left_join(plot_3_1a, plot_3_last_a) %>% 
+  mutate(new_cases = cases_last - cases_first) %>%
+  arrange(plot_3_bottom$State)
+
+
+plot_3 <- plot_3_top %>%
+  rbind(plot_3_bottom) %>%
+  mutate(month = month(date_first, label = TRUE)) %>%
+  select(month, State, new_cases)
+
+state_population_3 <- state_population %>%
+  group_by(State) %>%
+  summarise(population = sum(population))
+
+plot_3 <- plot_3 %>%
+  left_join(state_population_3) %>%
+  mutate(case_rate = (new_cases / population) * 100000)
+
+ggplot(plot_3,
+       aes(x = reorder(State, case_rate),
+           y = case_rate),
+       group = State) +
+  geom_line(color = "gray30") +
+  geom_point(aes(color = month),
+             size = 2) +
+  coord_flip() 
+  
+
+  
+### Attempt 2
+
+plot_3_1 <- covid_confirmed %>%
+  filter(date %in% c(ymd("2020-04-01"), ymd("2020-07-01"))) %>%
+  rename(cases_first = cases,
+         date_first = date) %>% 
+  group_by(State, date_first) %>%
+  summarise(cases_first = sum(cases_first))
+
+plot_3_1a <- plot_3_1 %>% 
+  filter(date_first == ymd("2020-04-01"))
+plot_3_1b <- plot_3_1 %>% 
+  filter(date_first == ymd("2020-07-01"))
+
+
+plot_3_last <- covid_confirmed %>%
+  filter(date %in% c(ymd("2020-04-30"), ymd("2020-07-30"))) %>% 
+  rename(cases_last = cases,
+         date_last = date) %>% 
+  group_by(State, date_last) %>%
+  summarise(cases_last = sum(cases_last))
+
+plot_3_last_a <- plot_3_last %>% 
+  filter(date_last == ymd("2020-04-30"))
+plot_3_last_b <- plot_3_last %>% 
+  filter(date_last == ymd("2020-07-30"))
+
+
+state_population_3 <- state_population %>%
+  group_by(State) %>%
+  summarise(population = sum(population))
+
+plot_3_bottom <- left_join(plot_3_1b, plot_3_last_b) %>%
+  mutate(new_cases = cases_last - cases_first) %>%
+  left_join(state_population_3) %>%
+  mutate(case_rate = (new_cases / population) * 100000) %>% 
+  arrange(case_rate)
+
+order_states <- plot_3_bottom$State
+order_states <- factor(order_states, ordered = TRUE)
+          
+plot_3_top <- left_join(plot_3_1a, plot_3_last_a) %>% 
+  mutate(new_cases = cases_last - cases_first) %>%
+  left_join(state_population_3) %>%
+  mutate(case_rate = (new_cases / population) * 100000) %>% 
+  arrange(plot_3_bottom$State)
+
+
+
+
+
+plot_3 <- plot_3_top %>%
+  rbind(plot_3_bottom) %>%
+  mutate(month = month(date_first, label = TRUE),
+         State = factor(State, ordered = TRUE,
+                        levels = order_states)) %>%
+  select(month, State, case_rate)
+
+ggplot(plot_3,
+       aes(x = State,
+           y = case_rate),
+       group = State) +
+  geom_line(color = "gray30") +
+  geom_point(aes(color = month),
+             size = 2) +
+  coord_flip() +
+  scale_x_continuous(breaks = seq(by = 300)) 
+
+
+
+# Upper one works
+
+
+
+plot_3 <- plot_3 %>%
+  left_join(state_population_3) %>%
+  mutate(case_rate = (new_cases / population) * 100000)
+
+ggplot(plot_3,
+       aes(x = reorder(State, case_rate),
+           y = case_rate,
+           group = State)) +
+  geom_line(color = "gray30") +
+  geom_point(aes(color = month),
+             size = 2) +
+  coord_flip()
+
+
+
+
+
+###
+plot_3 <- plot_3_1 %>%
+  left_join(plot_3_last, by = "County Name")
+  
+  
+  summarise(april_diff = ymd("2020-04-30") - ymd("2020-04-01"),
+            july_diff = ymd("2020-07-30") - ymd("2020-07-01"))
+  left_join(state_population)
+  group_by(State)
+  mutate(month = month(date)) %>%
+
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
    
 
 # Plot 4 ------------------------------------------------------------------
@@ -397,12 +585,44 @@ geom_line(aes(x = date, y = roll_mean),
 
 plot_5_data <- covid_confirmed %>%
   left_join(covid_deaths) %>%
-  group_by(State) %>%
-  summarise("Total Cases" = sum(cases, na.rm = TRUE),
-            "Total Deaths" = sum(deaths, na.rm = TRUE)) %>%
+  group_by(State, date) %>%
+  summarise(total_confirmed_statewise = sum(cases,
+                                  na.rm = TRUE),
+            total_deaths_statewise = sum(deaths,
+                                        na.rm = TRUE)) %>%
+  mutate("New Cases" = new_from_total(total_confirmed_statewise),
+        "New Deaths" = new_from_total(total_deaths_statewise)) %>%
+  group_by(State) %>%         
+  summarise("Total Cases" = sum(`New Cases`),
+            "Total Deaths" = sum(`New Deaths`),
+            cases = sum(total_confirmed_statewise),
+            deaths = sum(total_deaths_statewise)) %>%
   mutate("Death Rate (%)" = (`Total Deaths` / `Total Cases`)
          * 100)
 
+
+plot_5_data <- covid_confirmed %>%
+  left_join(covid_deaths) %>%
+  filter(date == ymd("2020-07-31")) %>%
+  group_by(State) %>%
+  summarise("Total Cases" = sum(cases),
+            "Total Deaths" = sum(deaths))
+
+
+### Attempt two wrangling
+plot_5_data <- covid_confirmed %>%
+  left_join(covid_deaths) %>%
+  filter(date == mdy(7/31/2020)) %>%
+  group_by(State) %>%
+  summarise("Total Cases" = sum(cases),
+            "Total Deaths" = sum(deaths))
+
+
+
+
+
+
+##
 
 table_part_5 <- plot_5_data %>%
   filter(`Death Rate (%)` >= 5) %>%
