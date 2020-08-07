@@ -62,13 +62,10 @@ west_fips <-  c(4, 8, 16, 35,
                  30, 49, 32, 56,
                  2, 6, 15, 41, 53)
 
-### Constants for plot 5.
-state_levels <- levels(states_df$STATEFP)
-name_levels <- levels(states_df$NAME)
+
 
 # Functions ---------------------------------------------------------------
 
-### Write a function ..............
 
 ### Write an R function that calculates the number
 ### of daily new cases from a vector of daily total cases.
@@ -81,22 +78,6 @@ new_from_total <- function(args) {
   diff <- args - with_first_value
   return(diff) # Returns difference as result
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -147,7 +128,7 @@ semo_county <- semo_county_raw %>%
 
 
 
-# Plots 
+# Plots
 
 
 # Plot 1 -------------------------------------------------------------------
@@ -187,12 +168,6 @@ p_deaths <- ggplot(plot_1_data) +
 p_cases + p_deaths +
   plot_layout(nrow = 1)
 
-
-### The box around the plot is not present rather just 2 axes.
-### ??
-
-
-  
 
 # Plot 2 -------------------------------------------------------------------
 ## Plot 2: Highlight Missouri Counties with 200+ students at SEMO
@@ -237,175 +212,34 @@ plot_2_final <- plot_2_data %>%
   
 
 
-### The box around the plot is not present rather just 2 axes.
-### ??
-
-
-
-
 # Plot 3 -------------------------------------------------------------------
 
 ## Plot 3: Cleveland plot comparing number of cases in April and July
 
-plot_3_final <- covid_confirmed %>%
-    filter(date %in% c(ymd("2020-04-01"):ymd("2020-04-30"),
-                       ymd("2020-07-01"):ymd("2020-07-30"))) %>%
-    mutate(month = month(date)) %>%
-    group_by(State,`County Name`, month) %>%
-    summarise(total_cases_county = sum(cases,
-                                       na.rm = TRUE)) %>%
-    left_join(state_population) %>%
-    mutate(rate_county = (total_cases_county / population)
-           * 100000)
-  
-a <- plot_3_final %>%
-  group_by(State, month) %>%
-  summarise(avg_rate = sum(total_cases_county) / sum(population) * 100000)
-    
-    
-ggplot(a,
-       aes(x = reorder(State, avg_rate),
-           y = avg_rate),
-       group = State) +
-  geom_line(color = "gray30") +
-  geom_point(aes(color = month),
-             size = 2) +
-  coord_flip()
-
-
-
-
-
-    group_by(State,`County Name`, month) %>%
-    
-    
-    
-    
-    summarise(pop_state = sum(population,
-                              na.rm = TRUE),
-              cases_per_state = sum(cases,
-                                    na.rm = TRUE),
-              rate = (cases_per_state / pop_state)
-              * 100000)
-  
-  
-ggplot(plot_3_final,
-       aes(x = reorder(State, rate),
-           y = rate),
-       group = State) +
-  geom_line(color = "gray30") +
-  geom_point(aes(color = month),
-             size = 2) +
-  coord_flip()
-  
-  
-    group_by(`State`, `County Name`, month) %>%
-    summarise(case_total = sum(cases,na.rm = TRUE),
-           case_rate_county = (case_total / population) * 100000)
-   
-  
-  
-  
-  
-  
-   group_by(`State`, month) %>%
-    summarise(total_confirmed = sum(cases,
-                                    na.rm = TRUE),
-              case_rate = (total_confirmed / population) * 100000)
-    
-
-   
-   
-   
-### Attempt 2
-  
- 
-# ??????????????????
-   
-   
-plot_3_1 <- covid_confirmed %>%
-  filter(date %in% c(ymd("2020-04-01"), ymd("2020-07-01"))) %>%
-  rename(cases_first = cases,
-         date_first = date) %>% 
-group_by(State, date_first) %>%
-  summarise(cases_first = sum(cases_first))
-
-plot_3_1a <- plot_3_1 %>% 
-  filter(date_first == ymd("2020-04-01"))
-plot_3_1b <- plot_3_1 %>% 
-  filter(date_first == ymd("2020-07-01"))
-
-
-plot_3_last <- covid_confirmed %>%
-  filter(date %in% c(ymd("2020-04-30"), ymd("2020-07-30"))) %>% 
-  rename(cases_last = cases,
-         date_last = date) %>% 
-  group_by(State, date_last) %>%
-  summarise(cases_last = sum(cases_last))
-
-plot_3_last_a <- plot_3_last %>% 
-  filter(date_last == ymd("2020-04-30"))
-plot_3_last_b <- plot_3_last %>% 
-  filter(date_last == ymd("2020-07-30"))
-
-
-plot_3_bottom <- left_join(plot_3_1b, plot_3_last_b) %>%
-  mutate(new_cases = cases_last - cases_first) %>%
-  arrange(desc(new_cases))
-plot_3_top <- left_join(plot_3_1a, plot_3_last_a) %>% 
-  mutate(new_cases = cases_last - cases_first) %>%
-  arrange(plot_3_bottom$State)
-
-
-plot_3 <- plot_3_top %>%
-  rbind(plot_3_bottom) %>%
-  mutate(month = month(date_first, label = TRUE)) %>%
-  select(month, State, new_cases)
-
-state_population_3 <- state_population %>%
-  group_by(State) %>%
-  summarise(population = sum(population))
-
-plot_3 <- plot_3 %>%
-  left_join(state_population_3) %>%
-  mutate(case_rate = (new_cases / population) * 100000)
-
-ggplot(plot_3,
-       aes(x = reorder(State, case_rate),
-           y = case_rate),
-       group = State) +
-  geom_line(color = "gray30") +
-  geom_point(aes(color = month),
-             size = 2) +
-  coord_flip() 
-  
-
-  
-### Attempt 2
 
 plot_3_1 <- covid_confirmed %>%
   filter(date %in% c(ymd("2020-04-01"), ymd("2020-07-01"))) %>%
   rename(cases_first = cases,
-         date_first = date) %>% 
+         date_first = date) %>%
   group_by(State, date_first) %>%
   summarise(cases_first = sum(cases_first))
 
-plot_3_1a <- plot_3_1 %>% 
+plot_3_1a <- plot_3_1 %>%
   filter(date_first == ymd("2020-04-01"))
-plot_3_1b <- plot_3_1 %>% 
+plot_3_1b <- plot_3_1 %>%
   filter(date_first == ymd("2020-07-01"))
 
 
 plot_3_last <- covid_confirmed %>%
-  filter(date %in% c(ymd("2020-04-30"), ymd("2020-07-30"))) %>% 
+  filter(date %in% c(ymd("2020-04-30"), ymd("2020-07-30"))) %>%
   rename(cases_last = cases,
-         date_last = date) %>% 
+         date_last = date) %>%
   group_by(State, date_last) %>%
   summarise(cases_last = sum(cases_last))
 
-plot_3_last_a <- plot_3_last %>% 
+plot_3_last_a <- plot_3_last %>%
   filter(date_last == ymd("2020-04-30"))
-plot_3_last_b <- plot_3_last %>% 
+plot_3_last_b <- plot_3_last %>%
   filter(date_last == ymd("2020-07-30"))
 
 
@@ -416,16 +250,16 @@ state_population_3 <- state_population %>%
 plot_3_bottom <- left_join(plot_3_1b, plot_3_last_b) %>%
   mutate(new_cases = cases_last - cases_first) %>%
   left_join(state_population_3) %>%
-  mutate(case_rate = (new_cases / population) * 100000) %>% 
+  mutate(case_rate = (new_cases / population) * 100000) %>%
   arrange(case_rate)
 
 order_states <- plot_3_bottom$State
 order_states <- factor(order_states, ordered = TRUE)
           
-plot_3_top <- left_join(plot_3_1a, plot_3_last_a) %>% 
+plot_3_top <- left_join(plot_3_1a, plot_3_last_a) %>%
   mutate(new_cases = cases_last - cases_first) %>%
   left_join(state_population_3) %>%
-  mutate(case_rate = (new_cases / population) * 100000) %>% 
+  mutate(case_rate = (new_cases / population) * 100000) %>%
   arrange(plot_3_bottom$State)
 
 
@@ -443,68 +277,23 @@ ggplot(plot_3,
        aes(x = State,
            y = case_rate),
        group = State) +
-  geom_line(color = "gray30") +
-  geom_point(aes(color = month),
+  geom_line(color = "gray50") +
+  geom_point(aes(fill = month,
+                 shape = month),
              size = 2) +
   coord_flip() +
-  scale_x_continuous(breaks = seq(by = 300)) 
-
-
-
-# Upper one works
-
-
-
-plot_3 <- plot_3 %>%
-  left_join(state_population_3) %>%
-  mutate(case_rate = (new_cases / population) * 100000)
-
-ggplot(plot_3,
-       aes(x = reorder(State, case_rate),
-           y = case_rate,
-           group = State)) +
-  geom_line(color = "gray30") +
-  geom_point(aes(color = month),
-             size = 2) +
-  coord_flip()
-
-
-
-
-
-###
-plot_3 <- plot_3_1 %>%
-  left_join(plot_3_last, by = "County Name")
+  scale_shape_manual(values = c(22, 21)) +
+  scale_fill_brewer(palette = "Dark2") +
+  theme_minimal() +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        legend.position = "none") +
+  labs(x = NULL,
+       y = "COVID-19 cases (per 100,000) for\nApril(squares) & July(circles)")
   
   
-  summarise(april_diff = ymd("2020-04-30") - ymd("2020-04-01"),
-            july_diff = ymd("2020-07-30") - ymd("2020-07-01"))
-  left_join(state_population)
-  group_by(State)
-  mutate(month = month(date)) %>%
 
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
+
 
 # Plot 4 ------------------------------------------------------------------
 
@@ -519,10 +308,10 @@ plot_4_data <- covid_confirmed %>%
      mutate(daily = new_from_total(total_cases))
    
 ### frollmean calculates a 7-day rolling average of daily new cases.
-plot_4_data$roll_mean <- 
+plot_4_data$roll_mean <-
   data.table::frollmean(plot_4_data$daily,
                         7, align = "right") %>%
-  replace_na(0)            
+  replace_na(0)
    
 ### Graph data
    
@@ -549,80 +338,23 @@ plot_4_data %>%
   
 
 
-
-
-
-#### The line does not show up when using highlight.
-plot_4_data %>%
-  ggplot(aes(x = date, y = daily)) +
-  geom_col(color = "gray85",
-           fill = "#C8102E") +
-  scale_x_date(date_labels = "%b %d",
-               date_breaks = "2 weeks") +
-  theme_classic() +
-  gghighlight(date == dmy("16 June 2020"),
-              unhighlighted_params = list(color = "gray85",
-                                          fill = "grey70")) +
-
-
-
-geom_line(aes(x = date, y = roll_mean),
-            color = "#9D2235",
-            size = 0.6, alpha = 1) +
-  annotate("text", x = mdy("Jun 01 2020"), y = 450,
-           label = "Missouri reopened\n       16 June 2020",
-           color = "#C8102E") +
-  labs(x = NULL,
-       y = "Daily New Cases")
-  
-
-
-
-
 # Plot 5 ------------------------------------------------------------------
 
 ## Plot 5: Table and choropleth map
 
-plot_5_data <- covid_confirmed %>%
-  left_join(covid_deaths) %>%
-  group_by(State, date) %>%
-  summarise(total_confirmed_statewise = sum(cases,
-                                  na.rm = TRUE),
-            total_deaths_statewise = sum(deaths,
-                                        na.rm = TRUE)) %>%
-  mutate("New Cases" = new_from_total(total_confirmed_statewise),
-        "New Deaths" = new_from_total(total_deaths_statewise)) %>%
-  group_by(State) %>%         
-  summarise("Total Cases" = sum(`New Cases`),
-            "Total Deaths" = sum(`New Deaths`),
-            cases = sum(total_confirmed_statewise),
-            deaths = sum(total_deaths_statewise)) %>%
-  mutate("Death Rate (%)" = (`Total Deaths` / `Total Cases`)
-         * 100)
 
 
 plot_5_data <- covid_confirmed %>%
   left_join(covid_deaths) %>%
   filter(date == ymd("2020-07-31")) %>%
   group_by(State) %>%
-  summarise("Total Cases" = sum(cases),
-            "Total Deaths" = sum(deaths))
+  summarise("Total Cases" = sum(cases, na.rm = TRUE),
+            "Total Deaths" = sum(deaths, na.rm = TRUE)) %>%
+  mutate("Death Rate (%)" = (`Total Deaths` / `Total Cases`)
+         * 100)
 
 
-### Attempt two wrangling
-plot_5_data <- covid_confirmed %>%
-  left_join(covid_deaths) %>%
-  filter(date == mdy(7/31/2020)) %>%
-  group_by(State) %>%
-  summarise("Total Cases" = sum(cases),
-            "Total Deaths" = sum(deaths))
-
-
-
-
-
-
-##
+### Table for part 5
 
 table_part_5 <- plot_5_data %>%
   filter(`Death Rate (%)` >= 5) %>%
@@ -633,11 +365,13 @@ table_part_5
 states <- st_read(here::here("data",
                              "cb_2017_us_state_500k.shp"),
                   stringsAsFactors = TRUE)
+
+
 states_df <- states %>%
   dplyr::filter(NAME %in% lower_48) %>%
   rename(State =  STUSPS)
 
-states_df <- left_join(states_df, plot_5_data)  
+states_df <- left_join(states_df, plot_5_data)
 
 
 ### Graph
@@ -652,56 +386,4 @@ ggplot(states_df) +
 
 
 
-
-
-
-
-
-### Legends?
-
-ggplot(states_df) +
-  geom_sf(aes(fill = `Death Rate (%)`)) +
-  scale_fill_viridis_c(name = "COVID-19 Death rate\n% of confirmed cases",
-                       option = "inferno",
-                       labels = c(2.5, 5.0, 7.5, 10.0)) +
-  coord_sf(crs = st_crs(5070)) +
-  theme_bw() +
-  theme(legend.position = "bottom")
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-    
+## END ##
