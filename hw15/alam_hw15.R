@@ -62,6 +62,9 @@ west_fips <-  c(4, 8, 16, 35,
                  30, 49, 32, 56,
                  2, 6, 15, 41, 53)
 
+### Constants for plot 5.
+state_levels <- levels(states_df$STATEFP)
+name_levels <- levels(states_df$NAME)
 
 # Functions ---------------------------------------------------------------
 
@@ -167,7 +170,7 @@ p_cases <- ggplot(plot_1_data) +
                 color = Region), size = 1) +
   labs(x = NULL,
        y = "Total Cases") +
-  theme_classic() +
+  theme_test() +
   theme(legend.position = "bottom")
 
 p_deaths <- ggplot(plot_1_data) +
@@ -176,7 +179,7 @@ p_deaths <- ggplot(plot_1_data) +
                 color = Region), size = 1) +
   labs(x = NULL,
        y = "Total Deaths") +
-  theme_classic() +
+  theme_test() +
   theme(legend.position = "none")
 
   
@@ -229,7 +232,7 @@ plot_2_final <- plot_2_data %>%
        color = "County") +
     gghighlight(`2019` >= 200,
                 use_direct_label = FALSE) +
-    theme_classic() +
+    theme_test() +
     scale_x_date(date_labels = "%d %b")
   
 
@@ -391,14 +394,59 @@ geom_line(aes(x = date, y = roll_mean),
 # Plot 5 ------------------------------------------------------------------
 
 ## Plot 5: Table and choropleth map
-  
-  
-  
- 
 
-   
+plot_5_data <- covid_confirmed %>%
+  left_join(covid_deaths) %>%
+  group_by(State) %>%
+  summarise("Total Cases" = sum(cases, na.rm = TRUE),
+            "Total Deaths" = sum(deaths, na.rm = TRUE)) %>%
+  mutate("Death Rate (%)" = (`Total Deaths` / `Total Cases`)
+         * 100)
+
+
+table_part_5 <- plot_5_data %>%
+  filter(`Death Rate (%)` >= 5) %>%
+  arrange(desc(`Death Rate (%)`))
+table_part_5
   
-   
+  
+states <- st_read(here::here("data",
+                             "cb_2017_us_state_500k.shp"),
+                  stringsAsFactors = TRUE)
+states_df <- states %>%
+  dplyr::filter(NAME %in% lower_48) %>%
+  rename(State =  STUSPS)
+
+states_df <- left_join(states_df, plot_5_data)  
+
+
+### Graph
+
+ggplot(states_df) +
+  geom_sf(aes(fill = `Death Rate (%)`)) +
+  scale_fill_viridis_c(name = "COVID-19 Death rate\n% of confirmed cases",
+                       option = "inferno") +
+  coord_sf(crs = st_crs(5070)) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+
+
+
+
+
+
+
+
+### Legends?
+
+ggplot(states_df) +
+  geom_sf(aes(fill = `Death Rate (%)`)) +
+  scale_fill_viridis_c(name = "COVID-19 Death rate\n% of confirmed cases",
+                       option = "inferno",
+                       labels = c(2.5, 5.0, 7.5, 10.0)) +
+  coord_sf(crs = st_crs(5070)) +
+  theme_bw() +
+  theme(legend.position = "bottom")
    
    
    
