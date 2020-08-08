@@ -321,7 +321,7 @@ plot_4_data %>%
            fill = "grey70") +
   scale_x_date(date_labels = "%b %d",
                date_breaks = "2 weeks") +
-  theme_classic() +
+  theme_test() +
   geom_col(data = filter(plot_4_data,
                          date == dmy("16 June 2020")),
            mapping = aes(x = date, y = daily),
